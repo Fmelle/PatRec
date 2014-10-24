@@ -1,0 +1,4 @@
+PatRec
+======
+
+Pattern Recognition Project
