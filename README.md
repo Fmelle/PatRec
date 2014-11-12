@@ -1,6 +1,7 @@
 PatRec
 ======
 
-Pattern Recognition Project
+Pattern Recognition Project 18794
 
-Fmelle is live
+Basic Outline
+=============
