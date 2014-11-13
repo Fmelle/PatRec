@@ -52,7 +52,9 @@ def doKNN(user_features, new_user_features, K):
 
 # do this if you're running this file alone, otherwise can import doKNN function
 if __name__ == '__main__':
+    print 'Running KNN example'
     user_features = pd.DataFrame.from_csv('rand_data_for_knn.csv')
     new_user_features = pd.DataFrame.from_csv('rand_data_for_knn_single_user.csv')
     K = 5
     distances = doKNN(user_features, new_user_features, K)
+    print distances
