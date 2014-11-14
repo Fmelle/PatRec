@@ -28,6 +28,7 @@ class PredictRatings(object):
     knownRatings: Pandas Matrix MxN with M being the number of users and N the
                  number of restaurants and type float
     """
+    # TODO: take in output of KNN and use that to predict
     def __init__(s, knownRatings):
         # Perform deep copy so as not to destroy input dataFrame
         s.knownRatings = knownRatings.copy()
@@ -58,6 +59,7 @@ class PredictRatings(object):
         # Get NaN locations
         missingIndx = np.where(ratings.isnull())
 
+        # Do this for nearest neighbors
         # Replace all missing indeces with average of user and establishment avg
         # Iterates by row TODO learn multi-indexing
         for [ir,ic] in np.array(missingIndx).T:
