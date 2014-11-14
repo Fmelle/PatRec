@@ -17,4 +17,6 @@ Additionally we will work on validation
 
 TODO
 ====
-
+- Extract top 50 reviewers
+- Usrs Vect: Votes, num reviews, average stars, compliments
+- Usrs to reviews: stars
