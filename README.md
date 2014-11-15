@@ -24,6 +24,7 @@ TODO
 Current JSON Data
 =================
 - Extracted elite users into _user_reduced_elite.json (20054 users)
+- Extracted all restaurants into _business_reduced_restaurants.json (14303 restaurants)
 
 TODO: Expand Users by mapping Restaurant_Info->Reviews->Users
-Challenge: Reviews count 1.2M objects/reviews with user and business id
+Challenge: Reviews count 1.2M objects/reviews - elite users has ~200 reviews each
