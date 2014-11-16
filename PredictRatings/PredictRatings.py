@@ -32,11 +32,7 @@ class PredictRatings(object):
         # Perform deep copy so as not to destroy input dataFrame
         s.knownRatings = knownRatings.copy()
 
-        # First remove users and establishments with no reviews
-        s.knownRatings.dropna(axis=0, how='all', inplace=True)
-        s.knownRatings.dropna(axis=1, how='all', inplace=True)
-
-    def getRatings(s):
+    def getRatings(s, usr, similarUsrs):
         """
         getRatings predicts all missing ratings
 
@@ -49,7 +45,15 @@ class PredictRatings(object):
         -------
         Pandas matrix MxN with no NaN values
         """
-        ratings = s.knownRatings
+
+        # Filter ratings to only look at similar users
+        indeces = np.append(similarUsrs, usr)
+        ratings = s.knownRatings.ix[indeces,:]
+        print ratings
+
+        # Remove users and establishments with no reviews
+        ratings.dropna(axis=0, how='all', inplace=True)
+        ratings.dropna(axis=1, how='all', inplace=True)
 
         # Take mean of rows and cols
         usrMeans = np.mean(ratings, axis=1)
@@ -71,4 +75,6 @@ if __name__ == '__main__':
     data = pd.DataFrame.from_csv('../Tests/rand_data_for_predict_ratings.csv')
     predictor = PredictRatings(data)
     print data
-    print predictor.getRatings()
+    usr = data.index[0]
+    similarUsrs = data.index[2:]
+    print predictor.getRatings(usr, similarUsrs)
