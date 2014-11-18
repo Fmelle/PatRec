@@ -44,7 +44,7 @@ def doKNN(user_features, new_user_features, K):
         dis = np.linalg.norm(new_user_features.sub(user_reviews, axis=0))
         distances.loc[len(distances)] = [user, dis]
 
-    distances.sort('distance', ascending=False, inplace=True)
+    distances.sort('distance', inplace=True)
     distances = distances.head(K)
 
     return distances

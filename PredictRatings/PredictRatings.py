@@ -25,10 +25,9 @@ class PredictRatings(object):
 
     Parameters
     ----------
-    knownRatings: Pandas Matrix MxN with M being the number of users and N the
-                 number of restaurants and type float
+    knownRatings: Pandas Matrix Mx1 doubly indexed by user_id and business_id
+                  with M being the number of reviews. Reviews are type float.
     """
-    # TODO: take in output of KNN and use that to predict
     def __init__(s, knownRatings):
         # Perform deep copy so as not to destroy input dataFrame
         s.knownRatings = knownRatings.copy()
@@ -42,6 +41,11 @@ class PredictRatings(object):
         Empty spaces are filled by taking the average of the user's other
         reviews and the establishment's other reviews.
 
+        Parameters
+        ----------
+        usr: String for the usr that we wish to TODO include?
+        similarUsrs: 
+
         Returns
         -------
         Pandas matrix MxN with no NaN values
@@ -50,7 +54,6 @@ class PredictRatings(object):
         # Filter ratings to only look at similar users
         indeces = np.append(similarUsrs, usr)
         ratings = s.knownRatings.ix[indeces,:]
-        print ratings
 
         # Remove users and establishments with no reviews
         ratings.dropna(axis=0, how='all', inplace=True)
@@ -74,9 +77,12 @@ class PredictRatings(object):
 
 if __name__ == '__main__':
     print 'Running Predict User example'
-    data = pd.DataFrame.from_csv('../Tests/rand_data_for_predict_ratings.csv')
+    data = pd.read_csv('../Tests/rand_data_for_predict_ratings.csv', 
+        index_col = ['user_id', 'business_id'])
     predictor = PredictRatings(data)
     print data
-    usr = data.index[0]
-    similarUsrs = data.index[2:]
+    usrs = data.index.labels[0]
+    usr = usrs[0]
+    similarUsrs = usrs[2:]
+    print usr, similarUsrs
     print predictor.getRatings(usr, similarUsrs)
