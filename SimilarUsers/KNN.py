@@ -14,7 +14,7 @@ def doKNN(user_features, new_user_features, K):
 
     Parameters
     ----------
-    user_featurs: a NxM DataFrame where each column is named
+    user_featurs: a MxN DataFrame where each column is named
                 a usedID and each row is the rating that column's
                 userID gave to that row's restaurant
     new_user_features: a Mx1 DataFrame where each column is a
@@ -44,7 +44,7 @@ def doKNN(user_features, new_user_features, K):
         dis = np.linalg.norm(new_user_features.sub(user_reviews, axis=0))
         distances.loc[len(distances)] = [user, dis]
 
-    distances.sort('distance', ascending=False, inplace=True)
+    distances.sort('distance', inplace=True)
     distances = distances.head(K)
 
     return distances

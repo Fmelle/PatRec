@@ -30,7 +30,7 @@ class PickRecommendation(object):
         # Perform deep copy so as not to destroy input dataFrame
         s.ratings = ratings.copy()
 
-    def getRecommendation(s, usr):
+    def getRecommendation(s, usrId, usrReviewed):
         """
         getRecommendation creates a recommendation for the given user
 
@@ -41,26 +41,26 @@ class PickRecommendation(object):
 
         Parameters
         ----------
-        usr: User data
+        usrId: User id string
+        usrReviewed: List of business_id of reviewed establishments
 
         Returns
         -------
         Establishment names ordered by best recommendation to worst 
-            or None if no recommendation 
+            or [] if no recommendation 
         """
         
         # Get possible recommendations
-        reviewed = np.array(usr['reviewed'])
-        unreviewed = np.setdiff1d(s.ratings.columns, reviewed,
+        unreviewed = np.setdiff1d(s.ratings.columns, usrReviewed,
             assume_unique=True)
         if len(unreviewed) == 0:
-            return None
+            return []
 
         # Get all users predicted recommendations
-        usrRatings = s.ratings.loc[usr['name'],unreviewed]
+        usrRatings = s.ratings.loc[usrId, unreviewed]
         usrRatings.sort(ascending=False)
-        return list(usrRatings.index)
-
+        # TODO cleaner way of extracting this data?
+        return list(usrRatings.reset_index().ix[:,'business_id'])
 
 if __name__ == '__main__':
     print 'Running Predict User example'
@@ -71,4 +71,4 @@ if __name__ == '__main__':
     recommender = PickRecommendation(data)
     usr = {'name':'U1', 'reviewed':['R2', 'R3']}
 
-    print recommender.getRecommendation(usr)
+    print recommender.getRecommendation(usr['name'], usr['reviewed'])
