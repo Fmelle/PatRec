@@ -64,6 +64,64 @@ Carnegie Mellon University\\
 \subsection{The Solution}
 Our solution is to fix this problem by giving a person personalized recommendations. Based on the person's past reviews, we aim to find a subset of \textit{Yelp} users with similar taste and guess the scores that the given person would give to restaurants he or she has not yet visited. This allows the person to try a new restaurant with a greater sense of security that he or she will enjoy the experience and not waste money. \cite{Alpher02}
 
+\section{Data Set}
+\subsection{Overview}
+\textit{Yelp} holds a massive amount of data to their disposal based on everything that users provide in terms of personal information, business information and everything they put into their reviews. For our purpose \textit{Yelp} provides a subset of this based on a specific region or city, generated with the same attributes as the real world data, which for our case is Phoenix, Arizona. This provides us with a total of 14303 restaurants and 1.2M reviews, all connected to Phoenix through around 250000 users.
+
+\subsection{Users}
+In order to generate a user characterizing model we were inclined to extract all the elite users as they contain the most data and will be the easiest to map for interests and taste. These users count a total of 20045 individuals, all with an average of 200 reviews each. This gives us a good basis to develop a model. In addition we have randomly extracted 2014 sample users not contained within the training data, to test our algorithm on, as well as the top 50 reviewers from the elite users to test the pipeline on. All users are in the same reduced format, only containing the parameters we deem necessary for characterizing the particular users whereas removed attributes primarily include \textit{friends}. The data is originally compiled in JSON, which we have expanded to operate on, and then convert to CSV for classification and prediction. Below is an example of user-specific data we will use as basis for our models.
+
+\begin{verbatim}
+	{
+        "average_stars": 3.65,
+        "compliments": {
+            "cool": 16,
+            "funny": 5,
+            "hot": 8,
+            "more": 1,
+            "note": 3,
+            "plain": 9,
+            "profile": 1,
+            "writer": 4
+        },
+        "elite": [
+            2013,
+            2014
+        ],
+        "fans": 7,
+        "name": "Lene",
+        "review_count": 214,
+        "user_id": "WvhiRlcyEiy-XYwiCofzdg",
+        "votes": {
+            "cool": 110,
+            "funny": 56,
+            "useful": 274
+        },
+        "yelping_since": "2010-10"
+    }
+\end{verbatim}
+
+\subsection{Restaurants}
+As \textit{Yelp} does not limit themselves to restaurants, neither does the original data set. Extracting these was the first part of our extraction. Furthermore, the restaurants contains a lot of information that we wouldn't find particularly interesting for our purposes and subsequently removed attributes as \textit{address}, \textit{hours}, \textit{neighborhoods}, geographical coordinates and general attributes such as \textit{Wi-fi}, \textit{Ambiance}, \textit{Noise level} and \textit{Attire}. We finally end up with a set of 14303 restaurants whereas one example of information we will use is detailed below.
+
+\begin{verbatim}
+	{
+	    "business_id": "8Jg4S5r79dh0l3rIbpVBcg",
+	    "categories": [
+	        "Pizza",
+	        "Restaurants"
+	    ],
+	    "city": "Phoenix",
+	    "name": "Mellow Mushroom",
+	    "review_count": 62,
+	    "stars": 3.5,
+	    "state": "AZ"
+	}
+\end{verbatim}
+
+\subsection{Reviews}
+
+
 \section{Algorithm Overivew}
 \subsection{The Pipeline}
 \begin{figure}[t]
@@ -92,7 +150,12 @@ Our code is implemented in Python's PANDAS module. Coding in Python allows us to
 
 \section{What We Plan to Do}
 
-\section{Issues and Potential Issues}
+\section{Challenges and Potential Issues}
+\subsection{Geograpichal restrictions}
+As mentioned our extracted data set contains users, restaurants and reviews somehow related to Phoenix, AZ. Although, this does not mean that every user, restaurant or review is directly connected this region. If a user has done one review of one restaurant in Phoenix, all his other reviews and effectively the corresponding restaurants is included in the data set. For now we have looked away from geographical locations, in order to have our algorithm give the best possible recommendation regardless of its location, but this is something we might have to look into later.
+
+\subsection{Duplications of reviews}
+rofl
 
 %uncomment and add \cite{}'s for bilbiography. fill in egbib.bib file
 {\small
