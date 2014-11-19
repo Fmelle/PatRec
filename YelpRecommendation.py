@@ -65,31 +65,39 @@ class YelpRecommendation(object):
         s.KNN_K = KNN_K
         s.predicter = PredictRatings(reviewData)
 
-    def getRecommendation(s, usr):
+    def getRecommendation(s, usrId):
         """
         Get a recommendation for the given user
         
         Parameters
         ----------
-        usr:    User id
+        usrId:    User id string
         """
 
         #----- Find similar users ----
 
         # Remove self if in user data
         otherUsrs = s.usrData
-        if usr in otherUsrs.index:
-            otherUsrs = otherUsrs.drop(usr)
+        if usrId in otherUsrs.index:
+            otherUsrs = otherUsrs.drop(usrId)
 
         # Note need to transpose usrData to have users in cols 
-        similarUsrs = doKNN(otherUsrs.T, s.usrData.ix[usr,:], s.KNN_K)
+        similarUsrs = doKNN(otherUsrs.T, s.usrData.ix[usrId,:], s.KNN_K)
 
         # Remove distance measure before passing on to predicter
         similarUsrs.drop('distance',1, inplace=True)
 
         #----- Predict user ratings ----
 
-        s.predicter.getRatings(usr, similarUsrs)
+        ratings = s.predicter.getRatings(usrId, similarUsrs)
+
+        #----- Pick best recommendation ----
+
+        recommender = PickRecommendation(ratings)
+
+        usrReviewed = s.reviewData.loc[usrId].index
+        recommendation = recommender.getRecommendation(usrId, usrReviewed)
+        return recommendation[0]
 
 #===============================================================================
 # Main
@@ -117,10 +125,6 @@ if __name__ == '__main__':
     reviewData = pd.read_csv(args.reviewFile,
         index_col = [USR_ID, BIZ_ID], usecols = REVIEW_FEATURES)
 
-    # Debugging
-    # print usrData.head()
-    # print reviewData.head()
-
     # Run recommendation
     recommender = YelpRecommendation(usrData, reviewData)
-    recommender.getRecommendation(args.userId);
+    print recommender.getRecommendation(args.userId);

@@ -30,7 +30,7 @@ class PredictRatings(object):
     """
     def __init__(s, knownRatings):
         # Perform deep copy so as not to destroy input dataFrame
-        s.knownRatings = knownRatings.copy()
+        s.knownRatings = knownRatings.copy().sort()
 
     def getRatings(s, usr, similarUsrs):
         """
@@ -43,7 +43,7 @@ class PredictRatings(object):
 
         Parameters
         ----------
-        usr: String for the usr that we wish to TODO include?
+        usr: String for the usr that we wish to review
         similarUsrs: 
 
         Returns
@@ -53,7 +53,8 @@ class PredictRatings(object):
 
         # Filter ratings to only look at similar users
         indeces = np.append(similarUsrs, usr)
-        ratings = s.knownRatings.ix[indeces,:]
+        ratings = s.knownRatings.loc[pd.IndexSlice[indeces,:],:]
+        ratings = ratings.unstack()
 
         # Remove users and establishments with no reviews
         ratings.dropna(axis=0, how='all', inplace=True)
@@ -68,7 +69,6 @@ class PredictRatings(object):
 
         # Do this for nearest neighbors
         # Replace all missing indeces with average of user and establishment avg
-        # Iterates by row TODO learn multi-indexing
         for [ir,ic] in np.array(missingIndx).T:
             ratings.iloc[ir,ic] = .5*(usrMeans[ir] + estMeans[ic])
 
@@ -80,9 +80,8 @@ if __name__ == '__main__':
     data = pd.read_csv('../Tests/rand_data_for_predict_ratings.csv', 
         index_col = ['user_id', 'business_id'])
     predictor = PredictRatings(data)
-    print data
-    usrs = data.index.labels[0]
+    print 'Data', data
+    usrs = data.index.levels[0]
     usr = usrs[0]
     similarUsrs = usrs[2:]
-    print usr, similarUsrs
-    print predictor.getRatings(usr, similarUsrs)
+    print 'Predicted', predictor.getRatings(usr, similarUsrs)
