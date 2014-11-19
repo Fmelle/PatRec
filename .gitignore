@@ -53,6 +53,8 @@ coverage.xml
 *.brf
 *.bbl
 *.dvi
+*.synctex.gz
+*.pdf
 
 # Sphinx documentation
 docs/_build/
