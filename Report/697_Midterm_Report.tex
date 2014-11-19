@@ -77,7 +77,7 @@ Our solution is to fix this problem by giving a person personalized recommendati
 \end{figure}
 
 Our pipeline takes in a person, and outputs a restaurant recommendation. In order to do this we first create a feature vector for the person, and find a list of similar users based on these features. We then see how these similar users rated restaurants the person has not been to, and therefore guess how the person would rate those restaurants. Finally, the restaurants with the highest expected ratings are returned to the user.
-\subsection{Similar Users and Restaurant Rating Prediction}
+\subsection{Similar Users and Rating Prediction}
 Our solution creates a feature vector of each user and uses the Kth Nearest Neighbor algorithm to cluster the feature vectors and find K users closest to the person based on the feature vector. We then take a weighted average of the reviews from those users for every restaurant the person has not visited to guess how that person would rate those restaurants.
 
 \section{What We Have Done}
