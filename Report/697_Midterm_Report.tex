@@ -69,7 +69,7 @@ Our solution is to fix this problem by giving a person personalized recommendati
 \textit{Yelp} holds a massive amount of data to their disposal based on everything that users provide in terms of personal information, business information and everything they put into their reviews. For our purpose \textit{Yelp} provides a subset of this based on a specific region or city, generated with the same attributes as the real world data, which for our case is Phoenix, Arizona. This provides us with a total of 14303 restaurants and 1.2M reviews, all connected to Phoenix through around 250000 users.
 
 \subsection{Users}
-In order to generate a user characterizing model we were inclined to extract all the elite users as they contain the most data and will be the easiest to map for interests and taste. These users count a total of 20045 individuals, all with an average of 200 reviews each. This gives us a good basis to develop a model. In addition we have randomly extracted 2014 sample users not contained within the training data, to test our algorithm on, as well as the top 50 reviewers from the elite users to test the pipeline on. All users are in the same reduced format, only containing the parameters we deem necessary for characterizing the particular users. Removed attributes primarily include \textit{friends}. The data is originally compiled in JSON, which we have expanded to operate on, and then convert to CSV for classification and prediction.
+In order to generate a user characterizing model we were inclined to extract all the elite users as they contain the most data and will be the easiest to map for interests and taste. These users count a total of 20045 individuals, all with an average of 200 reviews each. This gives us a good basis to develop a model. In addition we have randomly extracted 2014 sample users not contained within the training data, to test our algorithm on, as well as the top 50 reviewers from the elite users to test the pipeline on. All users are in the same reduced format, only containing the parameters we deem necessary for characterizing the particular users whereas removed attributes primarily include \textit{friends}. The data is originally compiled in JSON, which we have expanded to operate on, and then convert to CSV for classification and prediction. Below is an example of user-specific data we will use as basis for our models.
 
 \begin{verbatim}
 	{
@@ -102,9 +102,25 @@ In order to generate a user characterizing model we were inclined to extract all
 \end{verbatim}
 
 \subsection{Restaurants}
+As \textit{Yelp} does not limit themselves to restaurants, neither does the original data set. Extracting these was the first part of our extraction. Furthermore, the restaurants contains a lot of information that we wouldn't find particularly interesting for our purposes and subsequently removed attributes as \textit{address}, \textit{hours}, \textit{neighborhoods}, geographical coordinates and general attributes such as \textit{Wi-fi}, \textit{Ambiance}, \textit{Noise level} and \textit{Attire}. We finally end up with a set of 14303 restaurants whereas one example of information we will use is detailed below.
 
+\begin{verbatim}
+	{
+	    "business_id": "8Jg4S5r79dh0l3rIbpVBcg",
+	    "categories": [
+	        "Pizza",
+	        "Restaurants"
+	    ],
+	    "city": "Phoenix",
+	    "name": "Mellow Mushroom",
+	    "review_count": 62,
+	    "stars": 3.5,
+	    "state": "AZ"
+	}
+\end{verbatim}
 
 \subsection{Reviews}
+
 
 \section{Algorithm Overivew}
 \subsection{The Pipeline}
