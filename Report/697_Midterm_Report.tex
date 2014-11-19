@@ -64,8 +64,60 @@ Carnegie Mellon University\\
 \subsection{The Solution}
 Our solution is to fix this problem by giving a person personalized recommendations. Based on the person's past reviews, we aim to find a subset of \textit{Yelp} users with similar taste and guess the scores that the given person would give to restaurants he or she has not yet visited. This allows the person to try a new restaurant with a greater sense of security that he or she will enjoy the experience and not waste money. \cite{Alpher02}
 
+\section{Data Set}
+\subsection{Overview}
+\textit{Yelp} holds a massive amount of data to their disposal based on everything that users provide in terms of personal information, business information and everything they put into their reviews. For our purpose \textit{Yelp} provides a subset of this based on a specific region or city, generated with the same attributes as the real world data, which for our case is Phoeniz, AZ. This provides us with a total of 14303 restaurants and 1.2M reviews, all connected to Phoeniz through around 250000 users.
+
+\subsection{Users}
+In order to generate a user characterizing model we were inclined to extract all the elite users as they contain the most data and will be the easiest to map for interests and taste. These users count a total of 20045 individuals, all with an average of 200 reviews each. This gives us a good basis to develop a model. In addition we have randomly extracted 2014 sample users not contained within the training data, to test our algorithm on, as well as the top 50 reviewers from the elite users to test the pipeline on. All users are in the same reduced format, only containing the parameters we deem necessary for characterizing the particular users. Removed attributes primarily include \textit{friends}. The data is originally compiled in JSON, which we have expanded to operate on, and then convert to CSV for classification and prediction.
+
+\begin{verbatim}
+	{
+        "average_stars": 3.65,
+        "compliments": {
+            "cool": 16,
+            "funny": 5,
+            "hot": 8,
+            "more": 1,
+            "note": 3,
+            "plain": 9,
+            "profile": 1,
+            "writer": 4
+        },
+        "elite": [
+            2013,
+            2014
+        ],
+        "fans": 7,
+        "name": "Lene",
+        "review_count": 214,
+        "user_id": "WvhiRlcyEiy-XYwiCofzdg",
+        "votes": {
+            "cool": 110,
+            "funny": 56,
+            "useful": 274
+        },
+        "yelping_since": "2010-10"
+    }
+\end{verbatim}
+
+\subsection{Restaurants}
+
+
+\subsection{Reviews}
+
 \section{Algorithm Overivew}
 \subsection{The Pipeline}
+\begin{figure}[t]
+\begin{center}
+\fbox{\rule{0pt}{2in}
+   \includegraphics[width=0.8\linewidth]{WorkFlow.png}}
+\end{center}
+   \caption{A workflow diagram of our pipeline.}
+\label{fig:long}
+\label{fig:onecol}
+\end{figure}
+
 Our pipeline takes in a person, and outputs a restaurant recommendation. In order to do this we first create a feature vector for the person, and find a list of similar users based on these features. We then see how these similar users rated restaurants the person has not been to, and therefore guess how the person would rate those restaurants. Finally, the restaurants with the highest expected ratings are returned to the user.
 \subsection{Similar Users and Restaurant Rating Prediction}
 Our solution creates a feature vector of each user and uses the Kth Nearest Neighbor algorithm to cluster the feature vectors and find K users closest to the person based on the feature vector. We then take a weighted average of the reviews from those users for every restaurant the person has not visited to guess how that person would rate those restaurants.
