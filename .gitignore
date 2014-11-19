@@ -47,6 +47,13 @@ coverage.xml
 # Django stuff:
 *.log
 
+# Tex stuff
+*.aux
+*.blg
+*.brf
+*.bbl
+*.dvi
+
 # Sphinx documentation
 docs/_build/
 

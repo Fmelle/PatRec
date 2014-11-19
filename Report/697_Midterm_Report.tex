@@ -66,10 +66,19 @@ Our solution is to fix this problem by giving a person personalized recommendati
 
 \section{Algorithm Overivew}
 \subsection{The Pipeline}
-Our pipeline takes in a user, and outputs a restaurant recommendation. In order to do this
-\subsection{Similar Users}
-Our solution creates a 
+Our pipeline takes in a person, and outputs a restaurant recommendation. In order to do this we first create a feature vector for the person, and find a list of similar users based on these features. We then see how these similar users rated restaurants the person has not been to, and therefore guess how the person would rate those restaurants. Finally, the restaurants with the highest expected ratings are returned to the user.
+\subsection{Similar Users and Restaurant Rating Prediction}
+Our solution creates a feature vector of each user and uses the Kth Nearest Neighbor algorithm to cluster the feature vectors and find K users closest to the person based on the feature vector. We then take a weighted average of the reviews from those users for every restaurant the person has not visited to guess how that person would rate those restaurants.
 
+\section{What We Have Done}
+\subsection{Parsing the Data}
+The \textit{Yelp} dataset is very large, and so we have parsed it down and removed a small subset to work with. We took the data for the top 50 users, and all the restaurants they have visited, as well as their reviews of them, and the personal data \textit{Yelp} stores for those users. We converted all the data from JSON objects to easy to load and work with .csv files. The scripts which do this can easily be changed to load in data for a different set of users and save the same .csv files.
+\subsection{Making User Vectors and Finding Similar Users}
+Right now our user vectors are based on the user's \textit{Yelp} profiles. Yelp user reviews can be rated by other users as "funny", "useful", and "cool". Users can also compliment other users in many ways. We vectorize all of a users ratings and complements, as well as append the user \textit{Yelp} statistics (fans, average review, and number of reviews). This feature vector gives us an idea of how other users view this user in the \textit{Yelp} community. This feature vector was a quick way to create a feature vector that we could use and test in our pipeline, in the future we plan to add food and restaurant-specific features. To find similar usres, we simply run KNN for a single user feature vector on the entire set of user feature vectors. Modifying the feature vector is one of the key steps we plan to work on in the next half of the project.
+\subsection{Guessing User Reviews}
+Right now, to guess a user review, we take two things into account: the ratings a user's similar users rated a restaurant and the average rating of the restaurant overall We weight each by a half to guess how a user would rate a restaurant.
+\subsection{Implementation}
+Our code is implemented in Python's PANDAS module. Coding in Python allows us to rapidly prototype and get things working in the short amount of time we have to do the project. PANDAS, being strictly typed and implemented in C, speeds of computation time considerably and allows us to run our code on a much larger dataset. The code is visible at \url{https://github.com/sbarton272/PatRec}.
 
 %uncomment and add \cite{}'s for bilbiography. fill in egbib.bib file
 {\small
