@@ -91,7 +91,7 @@ In order to generate a user characterizing model we were inclined to extract all
         "fans": 7,
         "name": "Lene",
         "review_count": 214,
-        "user_id": "WvhiRlcyEiy-XYwiCofzdg",
+        "user_id": "WvhiRlcy-XYwiCof",
         "votes": {
             "cool": 110,
             "funny": 56,
@@ -124,11 +124,11 @@ While users and restaurants are necessary input information to structure our dat
 
 \begin{verbatim}
 	{
-	    "business_id": "HD_D2LTNTL6EXmvHF6x1qg",
+	    "business_id": "HD_D2LTNTL6EXmvH",
 	    "date": "2012-02-19",
-	    "review_id": "3vZLrrZ6aVt-kvTO5Q79pQ",
+	    "review_id": "3vZLrrZ6-kvTO5Q7",
 	    "stars": 5,
-	    "user_id": "t6GmgDZNeaTnj75NTRWc2w",
+	    "user_id": "t6GmgDZNeaTnj75NT",
 	    "votes": {
 	        "cool": 2,
 	        "funny": 2,
@@ -153,13 +153,15 @@ Our pipeline takes in a given user, and outputs a restaurant recommendation. In 
 
 \section{What We Have Done}
 \subsection{Parsing the Data}
-Even with the reduced data set, while establishing the pipeline we wanted to work with an even smaller set to visualize the input and output. We therefore took the data for the very top 50 elite users, and all the restaurants they have visited, as well as their reviews of them, and their personal data.
+Even with the reduced data set, while establishing the pipeline we wanted to work with an even smaller set to better visualize and evaluate the input and output. We therefore currently only use the data for the very top 50 elite users, and all the restaurants they have visited, as well as their reviews of them, and their personal data.
 \subsection{Making User Vectors and Finding Similar Users}
-Our solution creates a feature vector of each user and uses the K Nearest Neighbors algorithm to sort the feature vectors and find K users closest to the person based on the feature vector. We then take a weighted average of the reviews from those users for every restaurant the person has not visited to guess how that person would rate those restaurants.
+Our solution creates a feature vector of each user and uses the K Nearest Neighbors algorithm to sort the feature vectors and find K users closest to the person based on the feature vector.
 \\[0.5em]
 \indent Right now our user vectors are based on the user's \textit{Yelp} profiles. Yelp user reviews can be rated by other users as "funny", "useful", and "cool". Users can also compliment other users in many ways. We vectorize all of a users ratings and complements, as well as append the user \textit{Yelp} statistics (fans, average review rating, and number of reviews). This feature vector gives us an idea of how other users view this user in the \textit{Yelp} community. This feature vector was a quick way to create a feature vector that we could use and test in our pipeline, in the future we plan to add food and restaurant-specific features. To find similar usres, we simply run KNN for a single user feature vector on the entire set of user feature vectors. Modifying the feature vector is one of the key steps we plan to work on in the next half of the project.
 \subsection{Guessing User Reviews}
-Right now, to guess a user review, we take two things into account: the ratings a user's similar users rated a restaurant and the average rating of the restaurant. We weight each by a half to guess how a user would rate a restaurant.
+Our solution takes a weighted average of the reviews from those users for every restaurant the person has not visited to evaluate how that person would rate those restaurants.
+\\[0.5em]
+\indent Right now, to guess a user review, we take two things into account: the ratings a user's similar users rated a restaurant and the average rating of the restaurant. We weight each by a half to guess how a user would rate a restaurant.
 \subsection{Implementation}
 Our code is implemented in Python's PANDAS module. Coding in Python allows us to rapidly prototype and get things working in the short amount of time we have to do the project. PANDAS, being strictly typed and implemented in C, speeds of computation time considerably and allows us to run our code on a much larger dataset. The code is visible at \url{https://github.com/sbarton272/PatRec}.
 
