@@ -120,7 +120,22 @@ As \textit{Yelp} does not limit themselves to restaurants, neither does the orig
 \end{verbatim}
 
 \subsection{Reviews}
+While users and restaurants are necessary input information to structure our data and our results, the reviews are the backbone of our predictions and binds all of the data together. With a total of 1.2M reviews we chose to look away from the actual review text for now, as feature generation through analysis of this would become significant in our work progress, leaving us with a following structure of our reviews.
 
+\begin{verbatim}
+	{
+	    "business_id": "HD_D2LTNTL6EXmvHF6x1qg",
+	    "date": "2012-02-19",
+	    "review_id": "3vZLrrZ6aVt-kvTO5Q79pQ",
+	    "stars": 5,
+	    "user_id": "t6GmgDZNeaTnj75NTRWc2w",
+	    "votes": {
+	        "cool": 2,
+	        "funny": 2,
+	        "useful": 2
+	    }
+	}
+\end{verbatim}
 
 \section{Algorithm Overivew}
 \subsection{The Pipeline}
