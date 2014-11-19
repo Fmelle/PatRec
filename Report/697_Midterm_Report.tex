@@ -66,7 +66,7 @@ Our solution is to fix this problem by giving a person personalized recommendati
 
 \section{Data Set}
 \subsection{Overview}
-\textit{Yelp} holds a massive amount of data to their disposal based on everything that users provide in terms of personal information, business information and everything they put into their reviews. For our purpose \textit{Yelp} provides a subset of this based on a specific region or city, generated with the same attributes as the real world data, which for our case is Phoeniz, AZ. This provides us with a total of 14303 restaurants and 1.2M reviews, all connected to Phoeniz through around 250000 users.
+\textit{Yelp} holds a massive amount of data to their disposal based on everything that users provide in terms of personal information, business information and everything they put into their reviews. For our purpose \textit{Yelp} provides a subset of this based on a specific region or city, generated with the same attributes as the real world data, which for our case is Phoenix, Arizona. This provides us with a total of 14303 restaurants and 1.2M reviews, all connected to Phoenix through around 250000 users.
 
 \subsection{Users}
 In order to generate a user characterizing model we were inclined to extract all the elite users as they contain the most data and will be the easiest to map for interests and taste. These users count a total of 20045 individuals, all with an average of 200 reviews each. This gives us a good basis to develop a model. In addition we have randomly extracted 2014 sample users not contained within the training data, to test our algorithm on, as well as the top 50 reviewers from the elite users to test the pipeline on. All users are in the same reduced format, only containing the parameters we deem necessary for characterizing the particular users. Removed attributes primarily include \textit{friends}. The data is originally compiled in JSON, which we have expanded to operate on, and then convert to CSV for classification and prediction.
@@ -134,7 +134,12 @@ Our code is implemented in Python's PANDAS module. Coding in Python allows us to
 
 \section{What We Plan to Do}
 
-\section{Issues and Potential Issues}
+\section{Challenges and Potential Issues}
+\subsection{Geograpichal restrictions}
+As mentioned our extracted data set contains users, restaurants and reviews somehow related to Phoenix, AZ. Although, this does not mean that every user, restaurant or review is directly connected this region. If a user has done one review of one restaurant in Phoenix, all his other reviews and effectively the corresponding restaurants is included in the data set. For now we have looked away from geographical locations, in order to have our algorithm give the best possible recommendation regardless of its location, but this is something we might have to look into later.
+
+\subsection{Duplications of reviews}
+rofl
 
 %uncomment and add \cite{}'s for bilbiography. fill in egbib.bib file
 {\small
