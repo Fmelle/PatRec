@@ -29,8 +29,7 @@ class PredictRatings(object):
                   with M being the number of reviews. Reviews are type float.
     """
     def __init__(s, knownRatings):
-        # Perform deep copy so as not to destroy input dataFrame
-        s.knownRatings = knownRatings.copy().sort()
+        s.knownRatings = knownRatings.sort()
 
     def getRatings(s, usr, similarUsrs):
         """
