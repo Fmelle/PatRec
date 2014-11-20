@@ -179,10 +179,13 @@ As we currently make the following predictions based on a simple average analysi
 \\[.5em]
 \indent A first step is to rather than filling the matrix of users versus restaurants with extracted ratings that the individual users have provided, to fill it with something more complex that we have named DigIt factors. These factors are a weighted evaluation of the users review to the individual restaurant that optimally takes the individual users general evaluation and taste into account. With this approach we can normalize the ratings over all the users, such that a DigIt of say 4 out of 5 will imply the same appreciation across users. The final prediction will then be a numerical evaluation of normalized user reviews in DigIt factors along with the provided average basline evaluation of the restaurant and the test user's particular taste defined through personal visitation and review statistics.
 
-\subsection{Validation of output}
-
 \subsection{Evaluation of classifier: Implement generative models}
 Our current classifier, the KNN, is of the Deterministic Association type, making no assumptions of data distribution or correlation of any kind. This leaves a big room of improvement as our data contains unused information that we can take into equation. Rather than just deterministically sorting users based on numerical values, can further cluster and develop user-characterizing models based on taste. This edge especially relates to the fact that every restaurant is characterized by a set of labels such as \textit{Mexican}, \textit{Pizza}, \textit{American} among others that permits us to map a users taste based on general visitation and following reviews. Not only can this play a part in the development of similarity, but also help further weight the restaurant valuations and predictions in the following evaluation. We currently imagine using techniques such as Naïve Bayes with possible follow-up by a GMM variation.
+
+\subsection{Validation of output}
+We currently have yet to implement a fully functioning validation model of our output. The validation scheme should score our predictions based on a differentiation towards ground-truth results. We will for this exclude some of our training data for validation purposes preferably by taking the users with the most reviews, i.e. by example the top 50 users which have a lot of reviews to predict on. By removing a set of their reviews we may effectively look at the RMSE between our predictions and their actual reviews to get an idea of how well our complete algorithm works.
+\\[.5em]
+\indent We will naturally look at getting a validation scheme up and running as soon as possible to get the complete pipeline up and running before we start looking at increasing our performance in order to measure it.
 
 \section{Challenges and Potential Issues}
 \subsection{Geograpichal restrictions}
