@@ -64,10 +64,11 @@ class YelpRecommendation(object):
         s.KNN_K = KNN_K
         s.predicter = PredictRatings(reviewData)
 
-    def getRecommendation(s, usrId):
+    def predictRatings(s, usrId):
         """
-        Get a recommendation for the given user
-        
+        Get a ratings prediction matrix for the given user's 
+        similarUsrs
+
         Parameters
         ----------
         usrId:    User id string
@@ -89,6 +90,19 @@ class YelpRecommendation(object):
         #----- Predict user ratings ----
 
         ratings = s.predicter.getRatings(usrId, similarUsrs)
+
+        return ratings
+
+    def getRecommendation(s, usrId):
+        """
+        Get a recommendation for the given user
+        
+        Parameters
+        ----------
+        usrId:    User id string
+        """
+
+        ratings = s.predictRatings(usrId)
 
         #----- Pick best recommendation ----
 
