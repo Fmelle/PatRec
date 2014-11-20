@@ -62,13 +62,13 @@ Carnegie Mellon University\\
 \subsection{The Problem}
 Yelp is a popular destination for people looking to find out what other people think of restaurants, coffee shops, and other establishments in their area. Often people make decisions on where to eat based on the reviews other Yelp members give to restaurants they are considering. While this is more useful than having no information about the restaurant at all, someone looking for a recommendation is bound to the opinions of strangers, who perhaps have very different tastes in food. 
 \subsection{The Solution}
-Our solution is to fix this problem by giving a person personalized recommendations. Based on the person's past reviews, we aim to find a subset of \textit{Yelp} users with similar taste and guess the scores that the given person would give to restaurants he or she has not yet visited. This allows the person to try a new restaurant with a greater sense of security that he or she will enjoy the experience and not waste money.
+Our solution is to fix this problem by giving a person personalized recommendations. Based on the person's past reviews, we aim to find a subset of Yelp users with similar taste and guess the scores that the given person would give to restaurants he or she has not yet visited. This allows the person to try a new restaurant with a greater sense of security that he or she will enjoy the experience and not waste money.
 \subsection{Similar work}
 The core concept of our pipeline is based on solutions for the 2006-2009 Netflix Prize. This contest was aimed at improving Netflix' algorithm for providing user-specific movie recommendations. It went on over several years with the goal of beating Netflix original recommendation algorithm by a tenth. Although quite extensive algorithms went into the final solutions the general principles has been the inspiration for our solution and we will continue to use papers the contest produced as inspiration for our continued work with the project\cite{KorBell}\cite{BellKor}.
 
 \section{Data Set}
 \subsection{Overview}
-\textit{Yelp} holds a massive amount of data to their disposal based on everything that users provide in terms of personal information, business information and everything they put into their reviews. For our purpose \textit{Yelp} provides a subset of this based on a specific region or city, generated with the same attributes as the real world data, which for our case is Phoenix, Arizona. This provides us with a total of 14303 restaurants and 1.2M reviews, all connected to Phoenix through around 250000 users. The data is originally compiled JSON, which we have expanded to operate on, and then convert to a matrix-based CSV-format for classification and prediction. The scripts which do this can easily be adapted to load in more or less data as we proceed with the project.
+Yelp holds a massive amount of data to their disposal based on everything that users provide in terms of personal information, business information and everything they put into their reviews. For our purpose Yelp provides a subset of this based on a specific region or city, generated with the same attributes as the real world data, which for our case is Phoenix, Arizona. This provides us with a total of 14303 restaurants and 1.2M reviews, all connected to Phoenix through around 250000 users. The data is originally compiled JSON, which we have expanded to operate on, and then convert to a matrix-based CSV-format for classification and prediction. The scripts which do this can easily be adapted to load in more or less data as we proceed with the project.
 
 \subsection{Users}
 In order to generate a user characterizing model we were inclined to extract all the elite users as they contain the most data. Yelp classified 20045 individuals as elite, all with an average of 200 reviews each. In addition we have randomly extracted 2014 sample users not contained within the training data, to test our algorithm on, as well as the top 50 reviewers from the elite users to test the pipeline on. All users are in the same reduced format, only containing the parameters we deem necessary for characterizing the particular users. Below is an example of user-specific data we will use as basis for our models.
@@ -139,10 +139,17 @@ While users and restaurants are necessary input information to structure our dat
 	}
 \end{verbatim}
 
-\section{Results}
-Our results are relatively limited at this point. We have a very rough validation step that gets $100\%$ on the single test user with six reviews that we are currently using. Our basic validation process is to remove one known rating from a users reviews and attempt to predict that rating using the remaining user data. This result is overly positive and likely represents a code bug.
-
 \section{Algorithm Overivew}
+\subsection{The Pipeline}
+\begin{figure}[t]
+\begin{center}
+\fbox{\rule{0pt}{2in}
+   \includegraphics[width=0.6\linewidth]{WorkFlow.png}}
+\end{center}
+   \caption{A workflow diagram of our pipeline.}
+\label{fig:long}
+\label{fig:onecol}
+\end{figure}
 
 Our pipeline takes in a given user, and outputs a restaurant recommendation. In order to do this we first create a feature vector for the person, and find determine the most similar users based on these features. We then see how these similar users rated restaurants the user has not been to, and thus evaluate how the user would rate those restaurants. Finally, the restaurant with the highest expected rating is returned to the user.
 
@@ -153,12 +160,14 @@ Even with the reduced data set, while establishing the pipeline we wanted to wor
 Our solution creates a feature vector of each user and uses the K Nearest Neighbors algorithm to sort the feature vectors and find K users closest to the person based on the feature vector.
 \\[0.5em]
 \indent Right now our user vectors are based on the user's Yelp profiles. Yelp user reviews can be rated by other users as "funny", "useful", and "cool". Users can also compliment other users in many ways. We vectorize all of a users ratings and complements, as well as append the user Yelp statistics (fans, average review rating, and number of reviews). This feature vector gives us an idea of how other users view this user in the Yelp community. This feature vector was a quick way to create a feature vector that we could use and test in our pipeline, in the future we plan to add food and restaurant-specific features. To find similar usres, we simply run KNN for a single user feature vector on the entire set of user feature vectors. Modifying the feature vector is one of the key steps we plan to work on in the next half of the project.
-\subsection{Guessing User Reviews}
+\subsection{Evaluating User Reviews}
 Our solution takes a weighted average of the reviews from those users for every restaurant the person has not visited to evaluate how that person would rate those restaurants.
 \\[0.5em]
 \indent Right now, to guess a user review, we take two things into account: the ratings the similar users rated a restaurant and the average rating of the restaurant. We weight each by a half to guess how a user would rate a restaurant.
 \subsection{Implementation}
 Our code is implemented in Python's PANDAS module. Coding in Python allows us to rapidly prototype and get things working in the short amount of time we have to do the project. PANDAS, being strictly typed and implemented in C, speeds of computation time considerably and allows us to run our code on a much larger dataset. The code is visible at \url{https://github.com/sbarton272/PatRec}.
+\subsection{Results}
+Our results are relatively limited at this point. We have a very rough validation step that gets $100\%$ on the single test user with six reviews that we are currently using. Our basic validation process is to remove one known rating from a users reviews and attempt to predict that rating using the remaining user data. This result is overly positive and likely represents a code bug.
 
 \section{What We Plan to Do}
 Our current progress has aimed at establishing a pipeline that we believe have the potential of performing decent restaurant prediction given the right feature selection and evaluation. Although at this point the information we use to establish feature vectors and perform predictions are rather simple and serve in getting our system up, before we complicate with extensive analysis and feature selection. In order to perform a proper restaurant predictions and give good recommendations we will need to combine all the data we have to map the users more completely in terms of taste.
@@ -175,6 +184,15 @@ As we currently make the following predictions based on a simple average analysi
 \subsection{Evaluation of classifier: Implement generative models}
 Our current classifier, the KNN, is of the Deterministic Association type, making no assumptions of data distribution or correlation of any kind. This leaves a big room of improvement as our data contains unused information that we can take into equation. Rather than just deterministically sorting users based on numerical values, can further cluster and develop user-characterizing models based on taste. This edge especially relates to the fact that every restaurant is characterized by a set of labels such as \textit{Mexican}, \textit{Pizza}, \textit{American} among others that permits us to map a users taste based on general visitation and following reviews. Not only can this play a part in the development of similarity, but also help further weight the restaurant valuations and predictions in the following evaluation. We currently imagine using techniques such as Naïve Bayes with possible follow-up by a GMM variation.
 
+\begin{figure}[t]
+\begin{center}
+\fbox{\rule{0pt}{2in}
+   \includegraphics[width=0.9\linewidth]{usrCnt.png}}
+\end{center}
+   \caption{A histogram of the number of users organized by review count.}
+\label{fig:usrCnt}
+\end{figure}
+
 \subsection{Validation of output}
 We currently have yet to implement a fully functioning validation model of our output. The validation scheme should score our predictions based on a differentiation towards ground-truth results. We will for this exclude some of our training data for validation purposes preferably by taking the users with the most reviews, i.e. by example the top 50 users which have a lot of reviews to predict on. By removing a set of their reviews we may effectively look at the RMSE between our predictions and their actual reviews to get an idea of how well our complete algorithm works.
 \\[.5em]
@@ -185,26 +203,17 @@ We currently have yet to implement a fully functioning validation model of our o
 \begin{figure}[t]
 \begin{center}
 \fbox{\rule{0pt}{2in}
-   \includegraphics[width=0.9\linewidth]{usrCnt.png}}
-\end{center}
-   \caption{A histogram of the number of users organized by review count.}
-\label{fig:usrCnt}
-\end{figure}
-
-\begin{figure}[t]
-\begin{center}
-\fbox{\rule{0pt}{2in}
    \includegraphics[width=0.9\linewidth]{bizCnt.png}}
 \end{center}
    \caption{A histogram of the number of businesses organized by review count.}
 \label{fig:bizCnt}
 \end{figure}
 
-\subsection{Geographic Restrictions}
-As mentioned our extracted data set contains users, restaurants and reviews are somehow related to Phoenix, AZ. Although, this does not mean that every user, restaurant or review is directly connected to this region. If a user has done one review of one restaurant in Phoenix, all his other reviews and effectively the corresponding restaurants is included in the data set. For now we have looked away from geographical locations, in order to have our algorithm give the best possible recommendation regardless of its location, but this is something we might want to look into later.
-
 \subsection{Review Sparsity}
 One of our base assumptions is that users and establishments have enough reviews for us to extrapolate future reviews. However we may be pushing this limit. As can be seen in Figure~\ref{fig:usrCnt} a substantial majority of users, $85\%$, have five or fewer reviews. Since reviews likely provide the best information on user tastes we will likely have trouble classifying users by reviews alone. Likewise establishments also have a small number of reviews which will make it hard to predict potential ratings. However this is not quite as much of a problem as the user data. As can be seen in Figure~\ref{fig:bizCnt}, the majority, $60\%$, of businesses have fever than ten reviews.
+
+\subsection{Geographic Restrictions}
+As mentioned our extracted data set contains users, restaurants and reviews are somehow related to Phoenix, AZ. Although, this does not mean that every user, restaurant or review is directly connected to this region. If a user has done one review of one restaurant in Phoenix, all his other reviews and effectively the corresponding restaurants is included in the data set. For now we have looked away from geographical locations, in order to have our algorithm give the best possible recommendation regardless of its location, but this is something we might want to look into later.
 
 \subsection{Data Cleanliness}
 We have encountered issues with duplicate reviews as well as establishments not from the Phoenix area. Both are removed from our data set.
