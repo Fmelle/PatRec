@@ -87,8 +87,7 @@ for usr in list(usrData.index):
 
         # Set back value
         predicter.knownRatings.loc[usr,establishment] = val
-    print 'Finished:', counts['n']
-    break
+    print 'Finished:', counts
 
 # MSE
 if counts['n'] != counts['unable']:
