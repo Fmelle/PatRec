@@ -74,33 +74,33 @@ The core concept of our pipeline is based on solutions for the 2006-2009 Netflix
 In order to generate a user characterizing model we were inclined to extract all the elite users as they contain the most data and will be the easiest to map for interests and taste. These users count a total of 20045 individuals, all with an average of 200 reviews each. This gives us a good basis to develop a model. In addition we have randomly extracted 2014 sample users not contained within the training data, to test our algorithm on, as well as the top 50 reviewers from the elite users to test the pipeline on. All users are in the same reduced format, only containing the parameters we deem necessary for characterizing the particular users whereas removed attributes primarily include \textit{friends}. Below is an example of user-specific data we will use as basis for our models.
 
 \begin{verbatim}
-	{
-        "average_stars": 3.65,
-        "compliments": {
-            "cool": 16,
-            "funny": 5,
-            "hot": 8,
-            "more": 1,
-            "note": 3,
-            "plain": 9,
-            "profile": 1,
-            "writer": 4
-        },
-        "elite": [
-            2013,
-            2014
-        ],
-        "fans": 7,
-        "name": "Lene",
-        "review_count": 214,
-        "user_id": "WvhiRlcy-XYwiCof",
-        "votes": {
-            "cool": 110,
-            "funny": 56,
-            "useful": 274
-        },
-        "yelping_since": "2010-10"
-    }
+{
+    "average_stars": 3.65,
+    "compliments": {
+        "cool": 16,
+        "funny": 5,
+        "hot": 8,
+        "more": 1,
+        "note": 3,
+        "plain": 9,
+        "profile": 1,
+        "writer": 4
+    },
+    "elite": [
+        2013,
+        2014
+    ],
+    "fans": 7,
+    "name": "Lene",
+    "review_count": 214,
+    "user_id": "WvhiRlcy-XYwiCof",
+    "votes": {
+        "cool": 110,
+        "funny": 56,
+        "useful": 274
+    },
+    "yelping_since": "2010-10"
+}
 \end{verbatim}
 
 \subsection{Restaurants}
@@ -188,13 +188,6 @@ We currently have yet to implement a fully functioning validation model of our o
 \indent We will naturally look at getting a validation scheme up and running as soon as possible to get the complete pipeline up and running before we start looking at increasing our performance in order to measure it.
 
 \section{Challenges and Potential Issues}
-\subsection{Geographic Restrictions}
-As mentioned our extracted data set contains users, restaurants and reviews are somehow related to Phoenix, AZ. Although, this does not mean that every user, restaurant or review is directly connected to this region. If a user has done one review of one restaurant in Phoenix, all his other reviews and effectively the corresponding restaurants is included in the data set. For now we have looked away from geographical locations, in order to have our algorithm give the best possible recommendation regardless of its location, but this is something we might want to look into later.
-
-\subsection{Review Sparsity}
-One of our base assumptions is that users and establishments have enough reviews for us to extrapolate future reviews. However we may be pushing this limit. As can be seen in Figure~\ref{fig:usrCnt} a substantial majority of users, $85\%$, have five or fewer reviews. Since reviews likely provide the best information on user tastes we will likely have trouble classifying users by reviews alone. Likewise establishments also have a small number of reviews which will make it hard to predict potential ratings. However this is not quite as much of a problem as the user data. As can be seen in Figure~\ref{fig:bizCnt}, the majority, $60\%$, of businesses have fever than ten reviews.
-
-Figure~\ref{fig:bizCnt} 
 
 \begin{figure}[t]
 \begin{center}
@@ -214,6 +207,12 @@ Figure~\ref{fig:bizCnt}
 \label{fig:bizCnt}
 \end{figure}
 
+\subsection{Geographic Restrictions}
+As mentioned our extracted data set contains users, restaurants and reviews are somehow related to Phoenix, AZ. Although, this does not mean that every user, restaurant or review is directly connected to this region. If a user has done one review of one restaurant in Phoenix, all his other reviews and effectively the corresponding restaurants is included in the data set. For now we have looked away from geographical locations, in order to have our algorithm give the best possible recommendation regardless of its location, but this is something we might want to look into later.
+
+\subsection{Review Sparsity}
+One of our base assumptions is that users and establishments have enough reviews for us to extrapolate future reviews. However we may be pushing this limit. As can be seen in Figure~\ref{fig:usrCnt} a substantial majority of users, $85\%$, have five or fewer reviews. Since reviews likely provide the best information on user tastes we will likely have trouble classifying users by reviews alone. Likewise establishments also have a small number of reviews which will make it hard to predict potential ratings. However this is not quite as much of a problem as the user data. As can be seen in Figure~\ref{fig:bizCnt}, the majority, $60\%$, of businesses have fever than ten reviews.
+
 \subsection{Data Cleanliness}
 We have also run into issues with duplicate reviews as well as establishments not from the Phoenix area. Both are removed from our data set.
 
@@ -221,7 +220,5 @@ We have also run into issues with duplicate reviews as well as establishments no
 {\small
 \bibliographystyle{ieee}
 \bibliography{egbib}}
-
-TODO citations
 
 \end{document}
