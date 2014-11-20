@@ -173,7 +173,11 @@ Currently looking only at user-specific data for development of feature vectors 
 \\[.5em]
 \indent In a first time, we will seek to establish more advanced user vectors, including as much information as possible, before we can start statistically evaluating which features play the most signifcant role. We seek to explore this using techniques as LDA and PCA, comparing the results with the existing complete user vectors.
 
-\subsection{Advanced prediction model based on similar users}
+\subsection{Advanced prediction model: Normalization}
+As we currently make the following predictions based on a simple average analysis of equally weighted ratings we will seek to expand this part into something more subjective and normalized in terms of the test user. Even though the most similar users at this point are already optimized for the test user, their appreciation of restaurants through ratings are not.
+
+\\[.5em]
+\indent A first step is to rather than filling the matrix of users versus restaurants with extracted ratings that the individual users have provided, to fill it with something more complex that we have named DigIt factors. These factors are a weighted evaluation of the users review to the individual restaurant that optimally takes the individual users general evaluation and taste into account. With this approach we can normalize the ratings over all the users, such that a DigIt of say 4 out of 5 will imply the same appreciation across users. The final prediction will then be a numerical evaluation of normalized user reviews in DigIt factors along with the provided average basline evaluation of the restaurant and the test user's particular taste defined through personal visitation and review statistics.
 
 \subsection{Validation of output}
 
