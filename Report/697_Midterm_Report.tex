@@ -166,6 +166,16 @@ Our solution takes a weighted average of the reviews from those users for every 
 Our code is implemented in Python's PANDAS module. Coding in Python allows us to rapidly prototype and get things working in the short amount of time we have to do the project. PANDAS, being strictly typed and implemented in C, speeds of computation time considerably and allows us to run our code on a much larger dataset. The code is visible at \url{https://github.com/sbarton272/PatRec}.
 
 \section{What We Plan to Do}
+Our current progress has aimed at establishing a pipeline that we believe have the potential of performing decent restaurant prediction given the right feature selection and evaluation. Although at this point the information we use to establish feature vectors and perform predictions are rather simple and serve in getting our system up, before we complicate with extensive analysis and feature selection.
+
+\subsection{Feature selection and dimensionality reduction}
+
+\subsection{Advanced prediction model based on similar users}
+
+\subsection{Validation of output}
+
+\subsection{Evaluation of classifier: Implement generative models}
+Our current classifier, the KNN, is of the Deterministic Association type, making no assumptions of data distribution or correlation of any kind. This leaves a big room of improvement as our data contains unused information that we can take into equation. Rather than just deterministically sorting users based on numerical values, can further cluster and develop user-characterizing models based on taste. This edge especially relates to the fact that every restaurant is characterized by a set of labels such as \textit{Mexican}, \textit{Pizza}, \textit{American} among others that permits us to map a users taste based on general visitation and following reviews. Not only can this play a part in the development of similarity, but also help further weight the restaurant valuations and predictions in the following evaluation. We currently imagine using techniques such as Naïve Bayes with possible follow-up by a GMM variation.
 
 \section{Challenges and Potential Issues}
 \subsection{Geograpichal restrictions}
