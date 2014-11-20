@@ -10,7 +10,6 @@ Give an establishment recommendation for a given user
 # Imports
 #===============================================================================
 
-import sys
 import pandas as pd
 import numpy as np
 

@@ -1,0 +1,16 @@
+{
+  "MSE": 0.7856249999999998, 
+  "date": "2014_11_20_16_06_53", 
+  "n": 6, 
+  "off": [
+    2, 
+    2, 
+    0, 
+    0, 
+    0
+  ], 
+  "reviewFile": "../../ConvertedCSV/yelp_academic_dataset_review_reduced_top50.csv", 
+  "sqrE": 3.1424999999999992, 
+  "unable": 2, 
+  "usrFile": "../../ConvertedCSV/yelp_academic_dataset_user_reduced_top50.csv"
+}

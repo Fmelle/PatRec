@@ -7,8 +7,6 @@ Runs code to generate Yelp Recommendations. Performs validation and
 outputs a recommendation
 """
 
-# TODO make reviews doc smaller
-
 #===============================================================================
 # Imports
 #===============================================================================
@@ -19,10 +17,9 @@ import numpy as np
 
 
 # Import Our files
-import setup
-from KNN import doKNN
-from PredictRatings import PredictRatings
-from PickRecommendation import PickRecommendation
+from SimilarUsers.KNN import doKNN
+from PredictRatings.PredictRatings import PredictRatings
+from PickRecommendation.PickRecommendation import PickRecommendation
 
 #===============================================================================
 # Constants
@@ -62,13 +59,12 @@ class YelpRecommendation(object):
         s.usrData = usrData
         s.reviewData = reviewData
         s.KNN_K = KNN_K
-        s.predicter = PredictRatings(reviewData)
+        s.predicter = PredictRatings(s.reviewData)
 
-    def predictRatings(s, usrId):
+    def getRecommendation(s, usrId):
         """
-        Get a ratings prediction matrix for the given user's 
-        similarUsrs
-
+        Get a recommendation for the given user
+        
         Parameters
         ----------
         usrId:    User id string
@@ -90,19 +86,6 @@ class YelpRecommendation(object):
         #----- Predict user ratings ----
 
         ratings = s.predicter.getRatings(usrId, similarUsrs)
-
-        return ratings
-
-    def getRecommendation(s, usrId):
-        """
-        Get a recommendation for the given user
-        
-        Parameters
-        ----------
-        usrId:    User id string
-        """
-
-        ratings = s.predictRatings(usrId)
 
         #----- Pick best recommendation ----
 

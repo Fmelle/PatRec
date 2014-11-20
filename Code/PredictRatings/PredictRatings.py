@@ -10,7 +10,6 @@ Predict users ratings for establishments they have not reviewed
 # Imports
 #===============================================================================
 
-import sys
 import pandas as pd
 import numpy as np
 
@@ -53,6 +52,7 @@ class PredictRatings(object):
         # Filter ratings to only look at similar users
         indeces = np.append(similarUsrs, usr)
         ratings = s.knownRatings.loc[pd.IndexSlice[indeces,:],:]
+
         ratings = ratings.unstack()
 
         # Remove users and establishments with no reviews
