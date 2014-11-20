@@ -14,17 +14,20 @@ usrCnt = Counter(reviewData.index.labels[0]).values()
 bizCnt = Counter(reviewData.index.labels[1]).values()
 
 # Create histograms
-plt.hist(usrCnt, 300)
+n, bins, patches = plt.hist(usrCnt, 300)
+print n[0] / sum(n), bins[0:2]
 plt.xlim([0,50])
 plt.title('Number of users by review count')
 plt.xlabel('Number of reviews')
 plt.ylabel('Number of users')
-plt.savefig('usrCnt.png')
+#plt.savefig('usrCnt.png')
 plt.figure()
 
-plt.hist(bizCnt, 400)
+n, bins, patches = plt.hist(bizCnt, 400)
+print n[0] / sum(n), bins[0:2]
 plt.xlim([0,200])
 plt.title('Business of businesses by review count')
 plt.xlabel('Number of reviews')
 plt.ylabel('Number of businesses')
-plt.savefig('bizCnt.png')
+#plt.savefig('bizCnt.png')
+plt.show()

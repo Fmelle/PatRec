@@ -51,7 +51,7 @@ Carnegie Mellon University\\
 
 %%%%%%%%% ABSTRACT
 \begin{abstract}
-   When looking for somewhere to eat, people often read online reviews of restaurants they have not visited themselves. One of the most common websites that aggregates user reviews is \url{http://www.yelp.com}. Using machine learning techniques, we aimed make this process simpler by giving users specific restaurant recommendations, replacing their time spent looking through many possible places to eat, turning down many or most of them, with a small subset of restaurants the user is likely to enjoy based on the reviews of similar users.
+   When looking for somewhere to eat, people often read online reviews of restaurants they have not visited themselves. One of the most common websites that aggregates user reviews is Yelp. Using machine learning techniques, we aimed make this process simpler by giving users specific restaurant recommendations, replacing their time spent looking through many possible places to eat, turning down many or most of them, with a small subset of restaurants the user is likely to enjoy based on the reviews of similar users.
 
    
 \end{abstract}
@@ -60,7 +60,7 @@ Carnegie Mellon University\\
 \section{Introduction}
 
 \subsection{The Problem}
-\url{http://www.yelp.com} is a popular destination for people looking to find out what other people think of restaurants, coffee shops, and other food establishments in their area. Often people make decisions on where to eat based on the reviews other yelp members give to restaurants they're considering. While this is more useful than having no information about the restaurant at all, someone looking for a recommendation is bound to the opinions of strangers, who perhaps have very different tastes in food. 
+Yelp is a popular destination for people looking to find out what other people think of restaurants, coffee shops, and other food establishments in their area. Often people make decisions on where to eat based on the reviews other yelp members give to restaurants they're considering. While this is more useful than having no information about the restaurant at all, someone looking for a recommendation is bound to the opinions of strangers, who perhaps have very different tastes in food. 
 \subsection{The Solution}
 Our solution is to fix this problem by giving a person personalized recommendations. Based on the person's past reviews, we aim to find a subset of \textit{Yelp} users with similar taste and guess the scores that the given person would give to restaurants he or she has not yet visited. This allows the person to try a new restaurant with a greater sense of security that he or she will enjoy the experience and not waste money.
 \subsection{Similar work}
@@ -144,7 +144,7 @@ While users and restaurants are necessary input information to structure our dat
 \begin{figure}[t]
 \begin{center}
 \fbox{\rule{0pt}{2in}
-   \includegraphics[width=0.8\linewidth]{WorkFlow.png}}
+   \includegraphics[width=0.6\linewidth]{WorkFlow.png}}
 \end{center}
    \caption{A workflow diagram of our pipeline.}
 \label{fig:long}
@@ -188,13 +188,40 @@ We currently have yet to implement a fully functioning validation model of our o
 \indent We will naturally look at getting a validation scheme up and running as soon as possible to get the complete pipeline up and running before we start looking at increasing our performance in order to measure it.
 
 \section{Challenges and Potential Issues}
-\subsection{Geograpichal restrictions}
-As mentioned our extracted data set contains users, restaurants and reviews are somehow related to Phoenix, AZ. Although, this does not mean that every user, restaurant or review is directly connected this region. If a user has done one review of one restaurant in Phoenix, all his other reviews and effectively the corresponding restaurants is included in the data set. For now we have looked away from geographical locations, in order to have our algorithm give the best possible recommendation regardless of its location, but this is something we might want to look into later.
+\subsection{Geographic Restrictions}
+As mentioned our extracted data set contains users, restaurants and reviews are somehow related to Phoenix, AZ. Although, this does not mean that every user, restaurant or review is directly connected to this region. If a user has done one review of one restaurant in Phoenix, all his other reviews and effectively the corresponding restaurants is included in the data set. For now we have looked away from geographical locations, in order to have our algorithm give the best possible recommendation regardless of its location, but this is something we might want to look into later.
+
+\subsection{Review Sparsity}
+One of our base assumptions is that users and establishments have enough reviews for us to extrapolate future reviews. However we may be pushing this limit. As can be seen in Figure~\ref{fig:usrCnt} a substantial majority of users, $85\%$, have five or fewer reviews. Since reviews likely provide the best information on user tastes we will likely have trouble classifying users by reviews alone. Likewise establishments also have a small number of reviews which will make it hard to predict potential ratings. However this is not quite as much of a problem as the user data. As can be seen in Figure~\ref{fig:bizCnt}, the majority, $60\%$, of businesses have fever than ten reviews.
+
+Figure~\ref{fig:bizCnt} 
+
+\begin{figure}[t]
+\begin{center}
+\fbox{\rule{0pt}{2in}
+   \includegraphics[width=0.9\linewidth]{usrCnt.png}}
+\end{center}
+   \caption{A histogram of the number of users organized by review count.}
+\label{fig:usrCnt}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+\fbox{\rule{0pt}{2in}
+   \includegraphics[width=0.9\linewidth]{bizCnt.png}}
+\end{center}
+   \caption{A histogram of the number of businesses organized by review count.}
+\label{fig:bizCnt}
+\end{figure}
+
+\subsection{Data Cleanliness}
+We have also run into issues with duplicate reviews as well as establishments not from the Phoenix area. Both are removed from our data set.
 
 %uncomment and add \cite{}'s for bilbiography. fill in egbib.bib file
 {\small
 \bibliographystyle{ieee}
 \bibliography{egbib}}
 
+TODO citations
 
 \end{document}
