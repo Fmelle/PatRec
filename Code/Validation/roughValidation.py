@@ -73,6 +73,7 @@ for usr in list(usrData.index):
         prediction = predicter.getRatings(usr, similarUsrs)
         
         # Get predictions for given user
+        # TODO ensure usr always in ratings output (even if only one review)
         usrRatings = prediction.loc[usr]
         usrRatings.index = usrRatings.index.droplevel(0)
 
