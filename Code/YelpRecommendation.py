@@ -78,14 +78,16 @@ class YelpRecommendation(object):
             otherUsrs = otherUsrs.drop(usrId)
 
         # Note need to transpose usrData to have users in cols 
+        # TODO update to use object and return just similar usrs
         similarUsrs = doKNN(otherUsrs.T, s.usrData.ix[usrId,:], s.KNN_K)
 
         # Remove distance measure before passing on to predicter
         similarUsrs.drop('distance',1, inplace=True)
+        similarUsrs = np.ravel(similarUsrs.values)
 
         #----- Predict user ratings ----
 
-        ratings = s.predicter.getRatings(usrId, similarUsrs)
+        ratings = s.predicter.getRatings(similarUsrs)
 
         #----- Pick best recommendation ----
 

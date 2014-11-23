@@ -30,48 +30,29 @@ class PredictRatings(object):
     def __init__(s, knownRatings):
         s.knownRatings = knownRatings.sort()
 
-    def getRatings(s, usr, similarUsrs):
+    def getRatings(s, similarUsrs):
         """
-        getRatings predicts all missing ratings
-
-        Algorithm
-        ---------
-        Empty spaces are filled by taking the average of the user's other
-        reviews and the establishment's other reviews.
+        getRatings predicts ratings for the restaurants that similar
+        users have visited
 
         Parameters
         ----------
-        usr: String for the usr that we wish to review
-        similarUsrs: 
+        similarUsrs: Related users
 
         Returns
         -------
-        Pandas matrix MxN with no NaN values
+        Pandas matrix Mx1 with ratings
         """
+        if len(similarUsrs) == 0:
+            return []
 
         # Filter ratings to only look at similar users
-        indeces = np.append(similarUsrs, usr)
-        ratings = s.knownRatings.loc[pd.IndexSlice[indeces,:],:]
+        ratings = s.knownRatings.loc[pd.IndexSlice[similarUsrs,:],:]
 
-        ratings = ratings.unstack()
+        # Take mean of establishment reviews
+        estMeans = ratings.mean(0, level='business_id')
 
-        # Remove users and establishments with no reviews
-        ratings.dropna(axis=0, how='all', inplace=True)
-        ratings.dropna(axis=1, how='all', inplace=True)
-
-        # Take mean of rows and cols
-        usrMeans = np.mean(ratings, axis=1)
-        estMeans = np.mean(ratings, axis=0)
-
-        # Get NaN locations
-        missingIndx = np.where(ratings.isnull())
-
-        # Do this for nearest neighbors
-        # Replace all missing indeces with average of user and establishment avg
-        for [ir,ic] in np.array(missingIndx).T:
-            ratings.iloc[ir,ic] = .5*(usrMeans[ir] + estMeans[ic])
-
-        return ratings
+        return estMeans
 
 
 if __name__ == '__main__':
@@ -81,6 +62,5 @@ if __name__ == '__main__':
     predictor = PredictRatings(data)
     print 'Data', data
     usrs = data.index.levels[0]
-    usr = usrs[0]
     similarUsrs = usrs[2:]
-    print 'Predicted', predictor.getRatings(usr, similarUsrs)
+    print 'Predicted', predictor.getRatings(similarUsrs)

@@ -27,7 +27,7 @@ class PickRecommendation(object):
     """
     def __init__(s, ratings):
         # Perform deep copy so as not to destroy input dataFrame
-        s.ratings = ratings.copy()
+        s.ratings = ratings.sort(columns='stars')
 
     def getRecommendation(s, usrId, usrReviewed):
         """
@@ -50,21 +50,18 @@ class PickRecommendation(object):
         """
         
         # Get possible recommendations
-        unreviewed = np.setdiff1d(s.ratings.columns, usrReviewed,
+        unreviewed = np.setdiff1d(s.ratings.index, usrReviewed,
             assume_unique=True)
+
         if len(unreviewed) == 0:
             return []
-
-        # Get all users predicted recommendations
-        usrRatings = s.ratings.loc[usrId, unreviewed]
-        usrRatings.sort(ascending=False)
-        # TODO cleaner way of extracting this data?
-        return list(usrRatings.reset_index().ix[:,'business_id'])
+        return list(s.ratings.loc[unreviewed].index)
 
 if __name__ == '__main__':
     print 'Running Predict User example'
 
-    data = pd.DataFrame.from_csv('../Tests/rand_data_for_pick_recommendation.csv')
+    data = pd.read_csv('../Tests/rand_data_for_pick_recommendation.csv',
+        index_col=[0])
     print data
 
     recommender = PickRecommendation(data)
