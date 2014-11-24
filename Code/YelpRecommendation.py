@@ -77,6 +77,8 @@ class YelpRecommendation(object):
         if usrId in otherUsrs.index:
             otherUsrs = otherUsrs.drop(usrId)
 
+        # TODO add PCA as part of similar usrs
+
         # Note need to transpose usrData to have users in cols 
         # TODO update to use object and return just similar usrs
         similarUsrs = doKNN(otherUsrs.T, s.usrData.ix[usrId,:], s.KNN_K)

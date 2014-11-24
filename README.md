@@ -24,15 +24,17 @@ TODO: Expand Users by mapping Restaurant_Info->Reviews->Users
 
 TODO v2.0
 =========
-- Get user vector with restaurant types (Also average stars (User prior) and secondary user rating -> DigIt factor (norm. star=star/avg.star))
-- Expand restaurant information with Price Range, Geograpich Information, Average stars (Baseline/Restaurant Prior)
-- Predict Rating -> Only for selected user, add baseline
-- Possible Analysis for report: Best K, Best User Features
-- Introduce Basline in prediction model
-- Validation -> Predict whole user vector / As much as possible and add up MSE for each recommendation towards GT wherever possible.
+- (IMPORTANT) Get user vector with restaurant types
+- Expand restaurant information with Price Range, Geograpich Information, Average stars (Baseline/Restaurant Prior) -> add this data to the user vector
+- (DONE) Predict Rating -> Only for selected user
+- Add prediction baseline where predicted user rating is just restaurant avg
+- Analysis for report: Best K, Best User Features
+- Clean-up validation code
+- Incorporate PCA
+- Move knn and pca to a similar user class
 
 Secondary goals:
 ================
-- DigIt factor
-- Recommendation filter for close /lookup restaurant
+- DigIt factor (norm. star=star/avg.star)
+- Recommendation filter for nearby restaurants
 - Implement further intelligent clustering/classification scheme with K-Means/Naïve Bayes/GMM..
