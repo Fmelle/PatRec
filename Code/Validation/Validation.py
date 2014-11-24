@@ -1,15 +1,24 @@
-# Very rough validation
+# Perform validation based by predicting ratings based on similar users
 
 # Fix path problem
 import sys, os, json
 sys.path.append(os.path.abspath('..'))
 
+# Import project needs
 import pandas as pd
 import numpy as np
 import YelpRecommendation as yr
 from SimilarUsers.KNN import doKNN
 from PredictRatings.PredictRatings import PredictRatings
 from datetime import datetime
+
+#--------------------------
+
+# Parameters
+USER_WEIGHT = .7
+KNN_K = 10
+
+NOTES = 'USER_WEIGHT: ' + str(USER_WEIGHT) + ', KNN_K: ' + str(KNN_K)
 
 #--------------------------
 
@@ -28,10 +37,10 @@ reviewData = pd.read_csv(reviewFile,
 #--------------------------
 
 # Init recommendation
-predicter = PredictRatings(reviewData)
+predicter = PredictRatings(reviewData, USER_WEIGHT)
 
 # Record results
-counts = {'n':0, 'unable':0, 'sqrE':0, 'off': [0,0,0,0,0]}
+counts = {'n':0, 'nPred':0, 'sqrE':0, 'off': [0,0,0,0,0]}
 
 #--------------------------
 
@@ -40,14 +49,14 @@ for usr in list(usrData.index):
 
     # Get similar users
     otherUsrs = usrData.drop(usr)
-    similarUsrs = doKNN(otherUsrs.T, usrData.ix[usr,:], yr.KNN_K)
+    similarUsrs = doKNN(otherUsrs.T, usrData.ix[usr,:], KNN_K)
 
     # Remove distance measure before passing on to predicter
     similarUsrs.drop('distance',1, inplace=True)
-
     similarUsrs = similarUsrs.loc[:,'userID'].values
 
     # Get other's review establishments
+    # TODO cleanup
     otherReviews = reviewData.loc[pd.IndexSlice[similarUsrs,:],:]
     otherReviews = otherReviews.reset_index()
     otherReviews = otherReviews['business_id']
@@ -55,52 +64,43 @@ for usr in list(usrData.index):
 
     # Predict each rating
     usrReviews = reviewData.loc[usr]
-    for establishment in usrReviews.index:
-        
-        # Update count
-        counts['n'] += 1
+    counts['n'] += len(usrReviews)
 
-        # Check that establishment is amoung similar usrs, if not cannot predict
-        if establishment not in otherReviews:
-            counts['unable'] += 1
-            continue
-
-        # Remove review
-        val = predicter.knownRatings.loc[usr,establishment].copy()
-        predicter.knownRatings.loc[usr,establishment] = None
+    # Get predicted reviews
+    predictedReviews = usrReviews.index.intersection(otherReviews)
+    counts['nPred'] += len(predictedReviews)
+    
+    # Perform prediction if it makes sense
+    if len(predictedReviews) > 0:
         
-        # Predicted
+        # Get predictions
         prediction = predicter.getRatings(usr, similarUsrs)
-        
-        # Get predictions for given user
-        # TODO ensure usr always in ratings output (even if only one review)
-        usrRatings = prediction.loc[usr]
-        usrRatings.index = usrRatings.index.droplevel(0)
 
-        # Update counts
-        if establishment in usrRatings.index:
-            err = val.values[0] - usrRatings.loc[establishment]
-            counts['sqrE'] += err**2 
-            off = int(abs(round(val.values) - round(usrRatings.loc[establishment])))
-            counts['off'][off] += 1
-        else:
-            counts['unable'] += 1
+        usrRatings = usrReviews.loc[predictedReviews]
+        predictedRatings = prediction.loc[predictedReviews]
 
-        # Set back value
-        predicter.knownRatings.loc[usr,establishment] = val
+        # Calculate and record error
+        err = (usrRatings - predictedRatings)**2
+        counts['sqrE'] += sum(np.ravel(err.values))
+
+        offErr = usrRatings - predictedRatings.apply(np.round)
+        for x in offErr.values:
+            counts['off'][int(abs(x))] += 1
+
     print 'Finished:', counts
 
 # MSE
-if counts['n'] != counts['unable']:
-    counts['MSE'] = counts['sqrE'] / (counts['n'] - counts['unable'])
-print counts
+if counts['nPred'] != 0:
+    counts['MSE'] = counts['sqrE'] / counts['nPred']
+    print counts
 
 outData = counts
 outData['usrFile'] = usrFile
 outData['reviewFile'] = reviewFile
 t = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
 outData['date'] = t
+outData['notes'] = NOTES
 
-FP = open('../../Results/'+t + '.json','w')
+FP = open(t + '.json','w')
 json.dump(counts, FP, sort_keys=True, indent=2)
 FP.close()

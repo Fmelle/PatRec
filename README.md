@@ -32,6 +32,7 @@ TODO v2.0
 - (GAVI) Incorporate PCA
 - (GAVI) Move knn and pca to a similar user class
 - Analysis for report: Best K, Best User Features
+- Add restuarant data to recommendation
 
 Secondary goals:
 ================

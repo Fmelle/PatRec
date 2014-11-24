@@ -15,7 +15,6 @@ import argparse
 import pandas as pd
 import numpy as np
 
-
 # Import Our files
 from SimilarUsers.KNN import doKNN
 from PredictRatings.PredictRatings import PredictRatings
@@ -89,7 +88,7 @@ class YelpRecommendation(object):
 
         #----- Predict user ratings ----
 
-        ratings = s.predicter.getRatings(similarUsrs)
+        ratings = s.predicter.getRatings(usrId, similarUsrs)
 
         #----- Pick best recommendation ----
 

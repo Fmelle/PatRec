@@ -1,0 +1,17 @@
+{
+  "MSE": 0.90240566249369769, 
+  "date": "2014_11_24_17_30_58", 
+  "n": 3869, 
+  "nPred": 448, 
+  "notes": "Weighted average (1 user weight) of similar users and user average rating", 
+  "off": [
+    193, 
+    209, 
+    38, 
+    8, 
+    0
+  ], 
+  "reviewFile": "../../ConvertedCSV/yelp_academic_dataset_review_reduced_top50.csv", 
+  "sqrE": 404.27773679717654, 
+  "usrFile": "../../ConvertedCSV/yelp_academic_dataset_user_reduced_top50.csv"
+}

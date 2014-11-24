@@ -26,17 +26,21 @@ class PredictRatings(object):
     ----------
     knownRatings: Pandas Matrix Mx1 doubly indexed by user_id and business_id
                   with M being the number of reviews. Reviews are type float.
+    usrWeight: The weighting [0,1] to apply to the user''s average review when
+                predicting.
     """
-    def __init__(s, knownRatings):
+    def __init__(s, knownRatings, usrWeight = .5):
         s.knownRatings = knownRatings.sort()
+        s.USR_WEIGHT = usrWeight
 
-    def getRatings(s, similarUsrs):
+    def getRatings(s, usrId, similarUsrs):
         """
         getRatings predicts ratings for the restaurants that similar
         users have visited
 
         Parameters
         ----------
+        usrId: user who we are predicting for
         similarUsrs: Related users
 
         Returns
@@ -52,7 +56,11 @@ class PredictRatings(object):
         # Take mean of establishment reviews
         estMeans = ratings.mean(0, level='business_id')
 
-        return estMeans
+        # Factor in the user's average rating
+        usrAvg = s.knownRatings.loc[usrId,:].mean()
+        prediction = estMeans*(1 - s.USR_WEIGHT) + usrAvg*s.USR_WEIGHT
+
+        return prediction
 
 
 if __name__ == '__main__':
@@ -62,5 +70,6 @@ if __name__ == '__main__':
     predictor = PredictRatings(data)
     print 'Data', data
     usrs = data.index.levels[0]
+    usr = usrs[0]
     similarUsrs = usrs[2:]
-    print 'Predicted', predictor.getRatings(similarUsrs)
+    print 'Predicted', predictor.getRatings(usr, similarUsrs)
