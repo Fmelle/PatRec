@@ -28,7 +28,7 @@ TODO v2.0
 - (FRITZ) Expand restaurant information with Price Range, Geograpich Information, Average stars (Baseline/Restaurant Prior) -> add this data to the user vector
 - (DONE) Predict Rating -> Only for selected user
 - (SPENCER) Add prediction baseline where predicted user rating is just restaurant avg
-- (SPENCER) Clean-up validation code
+- (DONE) Clean-up validation code
 - (GAVI) Incorporate PCA
 - (GAVI) Move knn and pca to a similar user class
 - Analysis for report: Best K, Best User Features
