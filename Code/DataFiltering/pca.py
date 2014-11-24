@@ -23,6 +23,7 @@ def transform_data(data, num_components):
               0         1         2         3         4         5
     0 -1.383406 -2.221898 -3.605304  1.383406  2.221898  3.605304
     """
+    data.fillna(0, inplace=True)
     model = PCA(n_components = num_components)
     #pandas matrix has feature vector in column, model expects it in a row
     #-->convert to numpy matrix and then transpose

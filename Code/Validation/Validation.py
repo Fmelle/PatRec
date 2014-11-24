@@ -43,6 +43,7 @@ predicter = PredictRatings(reviewData, USER_WEIGHT)
 counts = {'n':0, 'nPred':0, 'sqrE':0, 'off': [0,0,0,0,0]}
 
 #--------------------------
+# TODO use YelpRecommendation
 
 # Iter through all reviews
 for usr in list(usrData.index):

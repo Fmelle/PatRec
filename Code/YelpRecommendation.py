@@ -16,7 +16,8 @@ import pandas as pd
 import numpy as np
 
 # Import Our files
-from SimilarUsers.KNN import doKNN
+from SimilarUsers.SimilarUsers import SimilarUsers
+import DataFiltering.pca as pca
 from PredictRatings.PredictRatings import PredictRatings
 from PickRecommendation.PickRecommendation import PickRecommendation
 
@@ -39,6 +40,7 @@ REVIEW_FEATURES = [USR_ID, BIZ_ID, 'stars']
 
 # KNN Consts
 KNN_K = 5
+N_PRINCIPAL_COMP = 2
 
 #===============================================================================
 # Yelp Recomendation
@@ -55,9 +57,14 @@ class YelpRecommendation(object):
                 id, user id and digIt factor
     """
     def __init__(s, usrData, reviewData):
-        s.usrData = usrData
+        # Perform PCA on user data
+        usrs = usrData.index;
+        reducedUsrDat = pca.transform_data(usrData.T, N_PRINCIPAL_COMP)
+        reducedUsrDat.columns = usrs
+
+        s.usrData = reducedUsrDat.T
         s.reviewData = reviewData
-        s.KNN_K = KNN_K
+        s.similarUsrSearcher = SimilarUsers(s.usrData, KNN_K)
         s.predicter = PredictRatings(s.reviewData)
 
     def getRecommendation(s, usrId):
@@ -71,20 +78,7 @@ class YelpRecommendation(object):
 
         #----- Find similar users ----
 
-        # Remove self if in user data
-        otherUsrs = s.usrData
-        if usrId in otherUsrs.index:
-            otherUsrs = otherUsrs.drop(usrId)
-
-        # TODO add PCA as part of similar usrs
-
-        # Note need to transpose usrData to have users in cols 
-        # TODO update to use object and return just similar usrs
-        similarUsrs = doKNN(otherUsrs.T, s.usrData.ix[usrId,:], s.KNN_K)
-
-        # Remove distance measure before passing on to predicter
-        similarUsrs.drop('distance',1, inplace=True)
-        similarUsrs = np.ravel(similarUsrs.values)
+        similarUsrs = s.similarUsrSearcher.findSimilarUsers(usrId)
 
         #----- Predict user ratings ----
 

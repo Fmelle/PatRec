@@ -12,15 +12,41 @@ Predict similar users
 
 import pandas as pd
 import numpy as np
+from KNN import doKNN
 
 #===============================================================================
 # SimilarUsers
 #===============================================================================
 
 class SimilarUsers(object):
-	"""SimilarUsers"""
-	def __init__(self, arg):
-		self.arg = arg
-		
+    """ SimilarUsers finds similar users
 
-		# TODO
+    Parameters
+    ----------
+    usrData:    MxN DataFrame of N users each with M features
+    """
+    def __init__(s, usrData, KNN_K):
+        s.usrData = usrData
+        s.KNN_K = KNN_K
+
+    def findSimilarUsers(s, usrId):
+        """ Find the similar users for a given user`
+
+        Parameters
+        ----------
+        usrId: user id to peform operation for
+        """
+
+        # Remove self if in user data
+        otherUsrs = s.usrData
+        if usrId in otherUsrs.index:
+            otherUsrs = otherUsrs.drop(usrId)
+
+        # Note need to transpose usrData to have users in cols 
+        similarUsrs = doKNN(otherUsrs.T, s.usrData.ix[usrId,:], s.KNN_K)
+
+        # Remove distance measure before passing on to predicter
+        similarUsrs.drop('distance',1, inplace=True)
+        similarUsrs = np.ravel(similarUsrs.values)
+
+        return similarUsrs
