@@ -13,14 +13,6 @@ Basic Outline
 3) Predict establishment likeness factor for user
 4) Recommend an establishment for the specified user
 
-Additionally we will work on validation
-
-TODO
-====
-- Extract top 50 reviewers
-- Users Vect: Votes, num reviews, average stars, compliments
-- Users to reviews: stars
-
 Current JSON Data
 =================
 - Extracted elite users into _user_reduced_elite__training.json (20054 users) -- Can be used to train characterizing user models
@@ -41,5 +33,6 @@ TODO v2.0
 
 Secondary goals:
 ================
+- DigIt factor
 - Recommendation filter for close /lookup restaurant
-- Implement further intelligent clustering/classification scheme with K-Means/Naïve Bayes/GMM..
+- Implement further intelligent clustering/classification scheme with K-Means/NaÃ¯ve Bayes/GMM..
