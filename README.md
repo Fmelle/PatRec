@@ -24,14 +24,14 @@ TODO: Expand Users by mapping Restaurant_Info->Reviews->Users
 
 TODO v2.0
 =========
-- (IMPORTANT) Get user vector with restaurant types
+- (IMPORTANT - FRITZ) Get user vector with restaurant types
 - Expand restaurant information with Price Range, Geograpich Information, Average stars (Baseline/Restaurant Prior) -> add this data to the user vector
 - (DONE) Predict Rating -> Only for selected user
-- Add prediction baseline where predicted user rating is just restaurant avg
+- (SPENCER) Add prediction baseline where predicted user rating is just restaurant avg
+- (SPENCER) Clean-up validation code
+- (GAVI) Incorporate PCA
+- (GAVI) Move knn and pca to a similar user class
 - Analysis for report: Best K, Best User Features
-- Clean-up validation code
-- Incorporate PCA
-- Move knn and pca to a similar user class
 
 Secondary goals:
 ================
