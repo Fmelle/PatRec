@@ -2,6 +2,7 @@
             
 import simplejson as json
 
+i = 0
 business_new = []
 with open('yelp_academic_dataset_business.json') as fin:
     for line in fin:
@@ -9,11 +10,11 @@ with open('yelp_academic_dataset_business.json') as fin:
         del line_contents['full_address']
         del line_contents['hours']
         del line_contents['open']
-        del line_contents['city']
         del line_contents['neighborhoods']
-        del line_contents['longitude']
-        del line_contents['state']
-        del line_contents['latitude']
+        price_range = line_contents.get('attributes', None).get('Price Range', 0)
+        line_contents['price_range'] = price_range
+        line_contents['average_stars'] = line_contents.get('stars', 0)
+        del line_contents['stars']
         del line_contents['attributes']
         del line_contents['type']
         business_new.append(line_contents)
