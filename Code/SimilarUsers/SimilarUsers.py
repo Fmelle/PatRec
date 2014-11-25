@@ -37,6 +37,8 @@ class SimilarUsers(object):
         usrId: user id to peform operation for
         """
 
+        # TODO handle taking in user vector instead
+
         # Remove self if in user data
         otherUsrs = s.usrData
         if usrId in otherUsrs.index:

@@ -1,0 +1,17 @@
+{
+  "MSE": 0.81052150313107907, 
+  "date": "2014_11_25_12_18_24", 
+  "n": 3869, 
+  "nPred": 706, 
+  "notes": "Parameters: {'numPrincipalComp': 10, 'knnK': 10, 'userWeight': 0.7}", 
+  "off": [
+    322, 
+    322, 
+    56, 
+    6, 
+    0
+  ], 
+  "reviewFile": "../../ConvertedCSV/yelp_academic_dataset_review_reduced_top50.csv", 
+  "sqrE": 572.22818121054183, 
+  "usrFile": "../../ConvertedCSV/yelp_academic_dataset_user_reduced_top50.csv"
+}

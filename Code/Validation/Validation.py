@@ -1,4 +1,14 @@
-# Perform validation based by predicting ratings based on similar users
+"""
+18-794 Project Proposal: Yelp Recommendations
+Fridtjof Melle (fmelle), Gavi Adler (gya), Spencer Barton (sebarton)
+Fall 2014
+
+Perform validation based by predicting ratings based on similar users
+"""
+
+#===============================================================================
+# Imports and set-up
+#===============================================================================
 
 # Fix path problem
 import sys, os, json
@@ -12,15 +22,27 @@ from SimilarUsers.KNN import doKNN
 from PredictRatings.PredictRatings import PredictRatings
 from datetime import datetime
 
-#--------------------------
+#===============================================================================
+# Script parameters
+#===============================================================================
+
+SAVE = True
+
+#===============================================================================
+# Model parameters
+#===============================================================================
 
 # Parameters
-USER_WEIGHT = .7
-KNN_K = 10
+params = {}
+params['userWeight'] = .7
+params['knnK'] = 10
+params['numPrincipalComp'] = 10
 
-NOTES = 'USER_WEIGHT: ' + str(USER_WEIGHT) + ', KNN_K: ' + str(KNN_K)
+NOTES = "Parameters: " + str(params)
 
-#--------------------------
+#===============================================================================
+# Load data files
+#===============================================================================
 
 # Consts
 usrFile = '../../ConvertedCSV/yelp_academic_dataset_user_reduced_top50.csv'
@@ -34,63 +56,64 @@ usrData = pd.read_csv(usrFile, index_col = yr.USR_ID,
 reviewData = pd.read_csv(reviewFile,
     index_col = [yr.USR_ID, yr.BIZ_ID], usecols = yr.REVIEW_FEATURES)
 
-#--------------------------
+#===============================================================================
+# Init model
+#===============================================================================
+
+print 'Running validation with:'
+print 'params: ', params
+print 'usrFile: ', usrFile
+print 'reviewFile: ', reviewFile
+print
 
 # Init recommendation
-predicter = PredictRatings(reviewData, USER_WEIGHT)
+predicter = yr.YelpRecommendation(usrData, reviewData,
+        params['numPrincipalComp'], params['knnK'], params['userWeight'])
 
 # Record results
 counts = {'n':0, 'nPred':0, 'sqrE':0, 'off': [0,0,0,0,0]}
 
-#--------------------------
-# TODO use YelpRecommendation
+#===============================================================================
+# Run trials
+#===============================================================================
 
 # Iter through all reviews
+N = len(usrData.index)
+i = 0
 for usr in list(usrData.index):
-
-    # Get similar users
-    otherUsrs = usrData.drop(usr)
-    similarUsrs = doKNN(otherUsrs.T, usrData.ix[usr,:], KNN_K)
-
-    # Remove distance measure before passing on to predicter
-    similarUsrs.drop('distance',1, inplace=True)
-    similarUsrs = similarUsrs.loc[:,'userID'].values
-
-    # Get other's review establishments
-    # TODO cleanup
-    otherReviews = reviewData.loc[pd.IndexSlice[similarUsrs,:],:]
-    otherReviews = otherReviews.reset_index()
-    otherReviews = otherReviews['business_id']
-    otherReviews = otherReviews.unique()
+    i+=1
 
     # Predict each rating
     usrReviews = reviewData.loc[usr]
     counts['n'] += len(usrReviews)
+        
+    # Get predictions
+    prediction = predicter.predictRatings(usr)
 
     # Get predicted reviews
-    predictedReviews = usrReviews.index.intersection(otherReviews)
-    counts['nPred'] += len(predictedReviews)
-    
-    # Perform prediction if it makes sense
-    if len(predictedReviews) > 0:
-        
-        # Get predictions
-        prediction = predicter.getRatings(usr, similarUsrs)
+    intersectReviews = usrReviews.index.intersection(prediction.index)
+    counts['nPred'] += len(intersectReviews)
 
-        usrRatings = usrReviews.loc[predictedReviews]
-        predictedRatings = prediction.loc[predictedReviews]
+    # Get the ratings which the user has already reviewed
+    usrRatings = usrReviews.loc[intersectReviews]
+    predictedRatings = prediction.loc[intersectReviews]
 
-        # Calculate and record error
-        err = (usrRatings - predictedRatings)**2
-        counts['sqrE'] += sum(np.ravel(err.values))
+    # Calculate and record error
+    err = (usrRatings - predictedRatings)**2
+    counts['sqrE'] += sum(np.ravel(err.values))
 
-        offErr = usrRatings - predictedRatings.apply(np.round)
-        for x in offErr.values:
-            counts['off'][int(abs(x))] += 1
+    offErr = usrRatings - predictedRatings.apply(np.round)
+    for x in offErr.values:
+        counts['off'][int(abs(x))] += 1
 
-    print 'Finished:', counts
+    # Progress report
+    print 'Finished (%d/%d):'%(i,N), counts
 
-# MSE
+#===============================================================================
+# Process and Save Results
+#===============================================================================
+
+# Mean sqr err
 if counts['nPred'] != 0:
     counts['MSE'] = counts['sqrE'] / counts['nPred']
     print counts
@@ -100,8 +123,14 @@ outData['usrFile'] = usrFile
 outData['reviewFile'] = reviewFile
 t = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
 outData['date'] = t
+
+# Add notes on model parameters
 outData['notes'] = NOTES
 
-FP = open(t + '.json','w')
-json.dump(counts, FP, sort_keys=True, indent=2)
-FP.close()
+# Save at json by timestamp
+if SAVE:
+    fName = t + '.json'
+    FP = open(fName,'w')
+    json.dump(counts, FP, sort_keys=True, indent=2)
+    FP.close()
+    print 'Saved to ', fName

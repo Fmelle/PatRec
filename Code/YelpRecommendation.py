@@ -11,7 +11,7 @@ outputs a recommendation
 # Imports
 #===============================================================================
 
-import argparse
+import argparse, sys
 import pandas as pd
 import numpy as np
 
@@ -25,6 +25,8 @@ from PickRecommendation.PickRecommendation import PickRecommendation
 # Constants
 #===============================================================================
 
+# TODO move to config file
+
 # CSV Parsing Consts
 USR_ID = 'user_id'
 BIZ_ID = 'business_id'
@@ -37,10 +39,6 @@ USR_FEATURES = ['compliments.plain', 'compliments.more', 'compliments.cool',
                 'votes.useful', 'compliments.hot', USR_ID]
 # Use only stars
 REVIEW_FEATURES = [USR_ID, BIZ_ID, 'stars']
-
-# KNN Consts
-KNN_K = 5
-N_PRINCIPAL_COMP = 2
 
 #===============================================================================
 # Yelp Recomendation
@@ -56,20 +54,30 @@ class YelpRecommendation(object):
     reviewData: Kx3 DataFrame of K reviews each consisting of an establishment 
                 id, user id and digIt factor
     """
-    def __init__(s, usrData, reviewData):
+    def __init__(s, usrData, reviewData, numPrplCmp=10, knnK=5, usrWeight=.5):
+        # Sanity check on number of principal components
+        if numPrplCmp > len(usrData.columns):
+            print "Trying to reduce user features from %d to %d features"\
+                    %(len(usrData.columns), numPrplCmp)
+            sys.exit(0)
+
+        # TODO logger utility
+
         # Perform PCA on user data
         usrs = usrData.index;
-        reducedUsrDat = pca.transform_data(usrData.T, N_PRINCIPAL_COMP)
+        reducedUsrDat = pca.transform_data(usrData.T, numPrplCmp)
         reducedUsrDat.columns = usrs
 
+        # Save data
         s.usrData = reducedUsrDat.T
         s.reviewData = reviewData
-        s.similarUsrSearcher = SimilarUsers(s.usrData, KNN_K)
-        s.predicter = PredictRatings(s.reviewData)
+        s.similarUsrSearcher = SimilarUsers(s.usrData, knnK)
+        s.predicter = PredictRatings(s.reviewData, usrWeight)
 
-    def getRecommendation(s, usrId):
+    def predictRatings(s, usrId):
         """
-        Get a recommendation for the given user
+        Predict ratings for the given user based off of their 
+        similar users' reviews
         
         Parameters
         ----------
@@ -84,12 +92,28 @@ class YelpRecommendation(object):
 
         ratings = s.predicter.getRatings(usrId, similarUsrs)
 
+        return ratings
+
+    def getRecommendation(s, usrId):
+        """
+        Get a recommendation for the given user
+        
+        Parameters
+        ----------
+        usrId:    User id string
+        """
+
+        #----- Predict Ratings -------------
+
+        ratings = s.predictRatings(usrId)
+
         #----- Pick best recommendation ----
 
         recommender = PickRecommendation(ratings)
 
         usrReviewed = s.reviewData.loc[usrId].index
-        recommendation = recommender.getRecommendation(usrId, usrReviewed)
+        recommendation = recommender.getRecommendation(usrReviewed)
+
         return recommendation[0]
 
 #===============================================================================

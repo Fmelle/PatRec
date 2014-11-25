@@ -29,8 +29,8 @@ TODO v2.0
 - (DONE) Predict Rating -> Only for selected user
 - (SPENCER) Add prediction baseline where predicted user rating is just restaurant avg
 - (DONE) Clean-up validation code
-- (GAVI) Incorporate PCA
-- (GAVI) Move knn and pca to a similar user class
+- (DONE) Incorporate PCA
+- (DONE) Move knn and pca to a similar user class
 - Analysis for report: Best K, Best User Features
 - Add restuarant data to recommendation
 

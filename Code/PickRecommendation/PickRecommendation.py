@@ -27,9 +27,9 @@ class PickRecommendation(object):
     """
     def __init__(s, ratings):
         # Perform deep copy so as not to destroy input dataFrame
-        s.ratings = ratings.sort(columns='stars')
+        s.ratings = ratings.sort(ascending=False, columns='stars')
 
-    def getRecommendation(s, usrId, usrReviewed):
+    def getRecommendation(s, usrReviewed):
         """
         getRecommendation creates a recommendation for the given user
 
@@ -40,7 +40,6 @@ class PickRecommendation(object):
 
         Parameters
         ----------
-        usrId: User id string
         usrReviewed: List of business_id of reviewed establishments
 
         Returns

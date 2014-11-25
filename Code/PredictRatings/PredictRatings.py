@@ -56,9 +56,13 @@ class PredictRatings(object):
         # Take mean of establishment reviews
         estMeans = ratings.mean(0, level='business_id')
 
-        # Factor in the user's average rating
-        usrAvg = s.knownRatings.loc[usrId,:].mean()
-        prediction = estMeans*(1 - s.USR_WEIGHT) + usrAvg*s.USR_WEIGHT
+        if usrId in s.knownRatings.index:
+            # Factor in the user's average rating
+            usrAvg = s.knownRatings.loc[usrId,:].mean()
+            prediction = estMeans*(1 - s.USR_WEIGHT) + usrAvg*s.USR_WEIGHT
+        else:
+            # User not in index so just predict on similar users
+            prediction = estMeans
 
         return prediction
 
