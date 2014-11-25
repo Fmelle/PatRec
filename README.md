@@ -27,7 +27,7 @@ TODO v2.0
 - (IMPORTANT - FRITZ) Get user vector with restaurant types
 - (FRITZ) Expand restaurant information with Price Range, Geograpich Information, Average stars (Baseline/Restaurant Prior) -> add this data to the user vector
 - (DONE) Predict Rating -> Only for selected user
-- (SPENCER) Add prediction baseline where predicted user rating is just restaurant avg
+- (DONE) Add prediction baseline where predicted user rating is just restaurant avg
 - (DONE) Clean-up validation code
 - (DONE) Incorporate PCA
 - (DONE) Move knn and pca to a similar user class

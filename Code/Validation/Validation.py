@@ -27,6 +27,7 @@ from datetime import datetime
 #===============================================================================
 
 SAVE = True
+DEBUG = False
 
 #===============================================================================
 # Model parameters
@@ -34,11 +35,12 @@ SAVE = True
 
 # Parameters
 params = {}
-params['userWeight'] = .7
+params['weights'] = [0, 0, 1] # [userWeight, simUserWeight, establishmentWeight]
 params['knnK'] = 10
 params['numPrincipalComp'] = 10
 
 NOTES = "Parameters: " + str(params)
+NOTES += " This is the baseline"
 
 #===============================================================================
 # Load data files
@@ -49,8 +51,7 @@ usrFile = '../../ConvertedCSV/yelp_academic_dataset_user_reduced_top50.csv'
 reviewFile = '../../ConvertedCSV/yelp_academic_dataset_review_reduced_top50.csv'
 
 # Get user data files
-usrData = pd.read_csv(usrFile, index_col = yr.USR_ID,
-    usecols = yr.USR_FEATURES)
+usrData = pd.read_csv(usrFile, index_col = yr.USR_ID, usecols = yr.USR_FEATURES)
 
 # Get review data
 reviewData = pd.read_csv(reviewFile,
@@ -68,7 +69,7 @@ print
 
 # Init recommendation
 predicter = yr.YelpRecommendation(usrData, reviewData,
-        params['numPrincipalComp'], params['knnK'], params['userWeight'])
+        params['numPrincipalComp'], params['knnK'], params['weights'])
 
 # Record results
 counts = {'n':0, 'nPred':0, 'sqrE':0, 'off': [0,0,0,0,0]}
@@ -108,6 +109,8 @@ for usr in list(usrData.index):
 
     # Progress report
     print 'Finished (%d/%d):'%(i,N), counts
+
+    if DEBUG: break
 
 #===============================================================================
 # Process and Save Results

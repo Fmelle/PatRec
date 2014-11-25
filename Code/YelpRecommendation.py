@@ -53,8 +53,12 @@ class YelpRecommendation(object):
     usrData:    MxN DataFrame of N users each with M features
     reviewData: Kx3 DataFrame of K reviews each consisting of an establishment 
                 id, user id and digIt factor
+    numPrplCmp: Number of principal components for PCA
+    knnK:       KNN number of nearest neighbors to find
+    weights:    1x3 vector for weights for predict ratings
+                [userWeight, simUserWeight, establishmentWeight]
     """
-    def __init__(s, usrData, reviewData, numPrplCmp=10, knnK=5, usrWeight=.5):
+    def __init__(s, usrData, reviewData, numPrplCmp=10, knnK=5, weights=[.5, .5, 0]):
         # Sanity check on number of principal components
         if numPrplCmp > len(usrData.columns):
             print "Trying to reduce user features from %d to %d features"\
@@ -72,7 +76,8 @@ class YelpRecommendation(object):
         s.usrData = reducedUsrDat.T
         s.reviewData = reviewData
         s.similarUsrSearcher = SimilarUsers(s.usrData, knnK)
-        s.predicter = PredictRatings(s.reviewData, usrWeight)
+        s.predicter = PredictRatings(s.reviewData, weights[0], 
+                        weights[1], weights[2])
 
     def predictRatings(s, usrId):
         """
