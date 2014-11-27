@@ -3,7 +3,6 @@
 import pandas as pd
 import numpy as np
 import simplejson as json
-import sys
 
 elite_user_file = '../ConvertedCSV/yelp_academic_dataset_user_reduced_elite.csv'
 user_restaurant_reviews_file = 'user_restaurant_review_mapping_ext.csv'
