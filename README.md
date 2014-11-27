@@ -24,9 +24,8 @@ TODO: Expand Users by mapping Restaurant_Info->Reviews->Users
 
 TODO v2.0
 =========
-- (IMPORTANT - FRITZ) Get user vector with restaurant types
-- (DONE) Expand restaurant information with Price Range, Geograpich Information, Average stars (Baseline/Restaurant Prior) -- Added new user_restaurant_review_mapping file with extension _ext -- REMARK: Switched business_id and user_id columns, while file is still sorted by restaurants as before for visual validation
-- (FRITZ) Add new restaurant info to the user vector
+- (IMPORTANT - FRITZ) Get user vector with restaurant types {  }
+- (DONE) Expand restaurant information with Price Range, Geograpich Information, Average stars (Baseline/Restaurant Prior) -- REMARK: Added to new file .._mapping_ext.csv for visual validation with old file -- Difference: Switched user_id and business_id columns while still sorted by restaurants
 - (DONE) Predict Rating -> Only for selected user
 - (DONE) Add prediction baseline where predicted user rating is just restaurant avg
 - (DONE) Clean-up validation code
