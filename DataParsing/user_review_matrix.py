@@ -10,7 +10,9 @@ review_file = '../ConvertedCSV/yelp_academic_dataset_review_reduced.csv'
 user_ids = pd.DataFrame(pd.DataFrame.from_csv(elite_user_file).reset_index()['user_id'])
 restaurant_ids = pd.DataFrame(pd.DataFrame.from_csv(restaurant_file).reset_index()['business_id'])
 reviews = pd.DataFrame.from_csv(review_file).reset_index()[['user_id', 'business_id', 'stars']]
+business_info = pd.DataFrame.from_csv(restaurant_file).reset_index()[['business_id', 'average_stars', 'price_range', 'latitude', 'longitude', 'categories']]
 user_reviews = user_ids.merge(reviews)
 user_restaurant_reviews = restaurant_ids.merge(user_reviews)
+user_restaurant_reviews_ext = user_reviews.merge(business_info)
 
-pd.DataFrame.to_csv(user_restaurant_reviews, 'user_restaurant_review_mapping.csv')
+pd.DataFrame.to_csv(user_restaurant_reviews_ext, 'user_restaurant_review_mapping_ext.csv')
