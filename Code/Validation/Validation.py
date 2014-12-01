@@ -47,11 +47,11 @@ NOTES += " This is the baseline"
 #===============================================================================
 
 # Consts
-usrFile = '../../ConvertedCSV/yelp_academic_dataset_user_reduced_top50.csv'
-reviewFile = '../../ConvertedCSV/yelp_academic_dataset_review_reduced_top50.csv'
+usrFile = '../../ConvertedCSV/user_feature_matrix.csv'
+reviewFile = '../../ConvertedCSV/user_restaurant_review_mapping_ext.csv'
 
 # Get user data files
-usrData = pd.read_csv(usrFile, index_col = yr.USR_ID, usecols = yr.USR_FEATURES)
+usrData = pd.read_csv(usrFile, index_col = yr.USR_ID)
 
 # Get review data
 reviewData = pd.read_csv(reviewFile,
