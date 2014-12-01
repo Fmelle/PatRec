@@ -47,7 +47,7 @@ NOTES += " This is the baseline"
 #===============================================================================
 
 # Consts
-usrFile = '../../ConvertedCSV/TODO.csv'
+usrFile = '../../ConvertedCSV/user_feature_matrix.csv'
 reviewFile = '../../ConvertedCSV/user_restaurant_review_mapping_ext.csv'
 
 # Get user data files
