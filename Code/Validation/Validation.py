@@ -28,6 +28,7 @@ from datetime import datetime
 
 SAVE = True
 DEBUG = False
+NUM_USR_RUN = 10
 
 #===============================================================================
 # Model parameters
@@ -48,6 +49,7 @@ NOTES += " This is the baseline"
 
 # Consts
 usrFile = '../../ConvertedCSV/user_feature_matrix.csv'
+testUsrFile = '../../ConvertedCSV/validation_users_feature.csv'
 reviewFile = '../../ConvertedCSV/user_restaurant_review_mapping_ext.csv'
 
 # Get user data files
