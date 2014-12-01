@@ -25,18 +25,9 @@ from PickRecommendation.PickRecommendation import PickRecommendation
 # Constants
 #===============================================================================
 
-# TODO move to config file
-
 # CSV Parsing Consts
 USR_ID = 'user_id'
 BIZ_ID = 'business_id'
-# Use all numeric features
-USR_FEATURES = ['compliments.plain', 'compliments.more', 'compliments.cool',
-                'compliments.profile', 'average_stars', 'review_count',
-                'compliments.list', 'votes.cool', 'votes.funny',
-                'compliments.writer', 'fans', 'compliments.cute',
-                'compliments.photos', 'compliments.note', 'compliments.funny',
-                'votes.useful', 'compliments.hot', USR_ID]
 # Use only stars
 REVIEW_FEATURES = [USR_ID, BIZ_ID, 'stars']
 
@@ -140,8 +131,7 @@ if __name__ == '__main__':
     print 'Running Yelp Recommendation for ' + args.userId
 
     # Get user data files
-    usrData = pd.read_csv(args.userFile, index_col = USR_ID,
-        usecols = USR_FEATURES)
+    usrData = pd.read_csv(args.userFile, index_col = USR_ID)
 
     # Get review data
     reviewData = pd.read_csv(args.reviewFile,
