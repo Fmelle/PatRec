@@ -7,6 +7,7 @@ import ast
 data = pd.read_csv('user_restaurant_review_mapping_ext.csv', 
     index_col = ['user_id', 'business_id'])
 
+
 categories = pd.read_csv('restaurant_types.csv', index_col=[0])
 catNum  = [c[0] + '_num'  for c in categories.values]
 catStar = [c[0] + '_star'  for c in categories.values]
