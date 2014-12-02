@@ -28,7 +28,6 @@ from datetime import datetime
 
 SAVE = True
 DEBUG = False
-NUM_USR_RUN = 10
 
 #===============================================================================
 # Model parameters
@@ -36,9 +35,9 @@ NUM_USR_RUN = 10
 
 # Parameters
 params = {}
-params['weights'] = [.33, .34, .33] # [userWeight, simUserWeight, establishmentWeight]
-params['knnK'] = 10
-params['numPrincipalComp'] = 10
+params['weights'] = [1, 0, 1] # [userWeight, simUserWeight, establishmentWeight]
+params['knnK'] = 20
+params['numPrincipalComp'] = 30
 
 NOTES = "This is the baseline."
 
@@ -75,7 +74,7 @@ predicter = yr.YelpRecommendation(usrData, reviewData,
         params['numPrincipalComp'], params['knnK'], params['weights'])
 
 # Record results
-counts = {'n':0, 'nPred':0, 'sqrE':0, 'off': [0,0,0,0,0]}
+counts = {'n':0, 'nPred':0, 'sqrE':0, 'off': [0,0,0,0,0,0]}
 
 #===============================================================================
 # Run trials
@@ -125,6 +124,7 @@ if counts['nPred'] != 0:
     print counts
 
 outData = counts
+outData['numUsr'] = N
 outData['usrFile'] = usrFile
 outData['testUsrFile'] = testUsrFile
 outData['reviewFile'] = reviewFile
@@ -136,7 +136,7 @@ outData['notes'] = NOTES
 outData['params'] = str(params)
 
 # Save at json by timestamp
-if SAVE:
+if SAVE and not DEBUG:
     fName = t + '.json'
     FP = open(fName,'w')
     json.dump(counts, FP, sort_keys=True, indent=2)

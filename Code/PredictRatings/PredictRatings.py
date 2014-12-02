@@ -36,9 +36,9 @@ class PredictRatings(object):
     def __init__(s, knownRatings, usrWeight = .33, simWeight = .33, estWeight = .33):
         s.knownRatings = knownRatings.sort()
         totalWeight = usrWeight + simWeight + estWeight
-        s.USR_WEIGHT = usrWeight / totalWeight
-        s.EST_WEIGHT = estWeight / totalWeight
-        s.SIM_WEIGHT = simWeight / totalWeight
+        s.USR_WEIGHT = float(usrWeight) / totalWeight
+        s.EST_WEIGHT = float(estWeight) / totalWeight
+        s.SIM_WEIGHT = float(simWeight) / totalWeight
 
     def getRatings(s, usrId, similarUsrs):
         """
