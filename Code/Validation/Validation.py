@@ -28,7 +28,6 @@ from datetime import datetime
 
 SAVE = True
 DEBUG = False
-NUM_USR_RUN = 10
 
 #===============================================================================
 # Model parameters
@@ -36,9 +35,9 @@ NUM_USR_RUN = 10
 
 # Parameters
 params = {}
-params['weights'] = [.33, .34, .33] # [userWeight, simUserWeight, establishmentWeight]
-params['knnK'] = 10
-params['numPrincipalComp'] = 10
+params['weights'] = [1, 0, 1] # [userWeight, simUserWeight, establishmentWeight]
+params['knnK'] = 20
+params['numPrincipalComp'] = 30
 
 NOTES = "Parameters: " + str(params)
 NOTES += " This is a full feature matrix"
@@ -54,6 +53,7 @@ reviewFile = '../../ConvertedCSV/user_restaurant_review_mapping_ext.csv'
 
 # Get user data files
 usrData = pd.read_csv(usrFile, index_col = yr.USR_ID)
+testUsr = pd.read_csv(testUsrFile, index_col = yr.USR_ID)
 
 # Get review data
 reviewData = pd.read_csv(reviewFile,
@@ -66,6 +66,7 @@ reviewData = pd.read_csv(reviewFile,
 print 'Running validation with:'
 print 'params: ', params
 print 'usrFile: ', usrFile
+print 'testFile: ', testUsrFile
 print 'reviewFile: ', reviewFile
 print
 
@@ -74,16 +75,16 @@ predicter = yr.YelpRecommendation(usrData, reviewData,
         params['numPrincipalComp'], params['knnK'], params['weights'])
 
 # Record results
-counts = {'n':0, 'nPred':0, 'sqrE':0, 'off': [0,0,0,0,0]}
+counts = {'n':0, 'nPred':0, 'sqrE':0, 'off': [0,0,0,0,0,0]}
 
 #===============================================================================
 # Run trials
 #===============================================================================
 
 # Iter through all reviews
-N = len(usrData.index)
+N = len(testUsr.index)
 i = 0
-for usr in list(usrData.index):
+for usr in list(testUsr.index):
     i+=1
 
     # Predict each rating
@@ -124,16 +125,19 @@ if counts['nPred'] != 0:
     print counts
 
 outData = counts
+outData['numUsr'] = N
 outData['usrFile'] = usrFile
+outData['testUsrFile'] = testUsrFile
 outData['reviewFile'] = reviewFile
 t = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
 outData['date'] = t
 
 # Add notes on model parameters
 outData['notes'] = NOTES
+outData['params'] = str(params)
 
 # Save at json by timestamp
-if SAVE:
+if SAVE and not DEBUG:
     fName = t + '.json'
     FP = open(fName,'w')
     json.dump(counts, FP, sort_keys=True, indent=2)

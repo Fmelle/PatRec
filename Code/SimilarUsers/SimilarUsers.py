@@ -12,7 +12,7 @@ Predict similar users
 
 import pandas as pd
 import numpy as np
-from KNN import doKNN
+from sklearn.neighbors import NearestNeighbors
 
 #===============================================================================
 # SimilarUsers
@@ -28,27 +28,22 @@ class SimilarUsers(object):
     def __init__(s, usrData, KNN_K):
         s.usrData = usrData
         s.KNN_K = KNN_K
+        # +1 to account for self being closest
+        s.nbrs = NearestNeighbors(n_neighbors=KNN_K+1, algorithm='auto').fit(usrData.values)
 
     def findSimilarUsers(s, usrId):
-        """ Find the similar users for a given user`
+        """ Find the similar users for a given user
 
         Parameters
         ----------
-        usrId: user id to peform operation for
+        usrId: user to perform knn
         """
 
-        # TODO handle taking in user vector instead
+        # Perform KNN
+        usrVect = s.usrData.ix[usrId,:]
+        distances, similarUsrsInd = s.nbrs.kneighbors(usrVect)
 
-        # Remove self if in user data
-        otherUsrs = s.usrData
-        if usrId in otherUsrs.index:
-            otherUsrs = otherUsrs.drop(usrId)
-
-        # Note need to transpose usrData to have users in cols 
-        similarUsrs = doKNN(otherUsrs.T, s.usrData.ix[usrId,:], s.KNN_K)
-
-        # Remove distance measure before passing on to predicter
-        similarUsrs.drop('distance',1, inplace=True)
-        similarUsrs = np.ravel(similarUsrs.values)
-
+        # Remove self as top similar user
+        similarUsrsInd = similarUsrsInd[0][1:]
+        similarUsrs = s.usrData.index[similarUsrsInd]
         return similarUsrs

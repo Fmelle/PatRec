@@ -1,0 +1,21 @@
+{
+  "MSE": 0.57759472800056666, 
+  "date": "2014_12_02_03_40_12", 
+  "n": 1939, 
+  "nPred": 688, 
+  "notes": "This is the baseline.", 
+  "numUsr": 46, 
+  "off": [
+    357, 
+    302, 
+    27, 
+    2, 
+    0, 
+    0
+  ], 
+  "params": "{'numPrincipalComp': 30, 'weights': [0.33, 0.34, 0.33], 'knnK': 5}", 
+  "reviewFile": "../../ConvertedCSV/user_restaurant_review_mapping_ext.csv", 
+  "sqrE": 397.38517286438986, 
+  "testUsrFile": "../../ConvertedCSV/validation_users_feature.csv", 
+  "usrFile": "../../ConvertedCSV/user_feature_matrix.csv"
+}
