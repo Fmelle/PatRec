@@ -54,6 +54,7 @@ reviewFile = '../../ConvertedCSV/user_restaurant_review_mapping_ext.csv'
 
 # Get user data files
 usrData = pd.read_csv(usrFile, index_col = yr.USR_ID)
+testUsr = pd.read_csv(testUsrFile, index_col = yr.USR_ID)
 
 # Get review data
 reviewData = pd.read_csv(reviewFile,
@@ -66,6 +67,7 @@ reviewData = pd.read_csv(reviewFile,
 print 'Running validation with:'
 print 'params: ', params
 print 'usrFile: ', usrFile
+print 'testFile: ', testUsrFile
 print 'reviewFile: ', reviewFile
 print
 
@@ -81,9 +83,9 @@ counts = {'n':0, 'nPred':0, 'sqrE':0, 'off': [0,0,0,0,0]}
 #===============================================================================
 
 # Iter through all reviews
-N = len(usrData.index)
+N = len(testUsr.index)
 i = 0
-for usr in list(usrData.index):
+for usr in list(testUsr.index):
     i+=1
 
     # Predict each rating
@@ -125,6 +127,7 @@ if counts['nPred'] != 0:
 
 outData = counts
 outData['usrFile'] = usrFile
+outData['testUsrFile'] = testUsrFile
 outData['reviewFile'] = reviewFile
 t = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
 outData['date'] = t
