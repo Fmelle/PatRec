@@ -41,7 +41,7 @@ params['knnK'] = 10
 params['numPrincipalComp'] = 10
 
 NOTES = "Parameters: " + str(params)
-NOTES += " This is the baseline"
+NOTES += " This is a full feature matrix"
 
 #===============================================================================
 # Load data files
