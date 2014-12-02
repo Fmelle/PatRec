@@ -40,8 +40,7 @@ params['weights'] = [.33, .34, .33] # [userWeight, simUserWeight, establishmentW
 params['knnK'] = 10
 params['numPrincipalComp'] = 10
 
-NOTES = "Parameters: " + str(params)
-NOTES += " This is the baseline"
+NOTES = "This is the baseline."
 
 #===============================================================================
 # Load data files
@@ -134,6 +133,7 @@ outData['date'] = t
 
 # Add notes on model parameters
 outData['notes'] = NOTES
+outData['params'] = str(params)
 
 # Save at json by timestamp
 if SAVE:

@@ -3,6 +3,19 @@ PatRec
 
 Pattern Recognition Project 18794
 
+Parameters to Run
+=================
+			weights				knnK	numPrincipalComp
+Baseline	[0, 0, 1]			10 		10
+Vary W		[1, 0, 0]			10 		10
+			[.5, .5, 0]			10 		10
+Vary K		[.33, .34, .33]		10 		10
+			[.33, .34, .33]		20 		10
+			[.33, .34, .33]		30 		10
+Vary PCA	[.33, .34, .33]		10 		20
+			[.33, .34, .33]		20 		20
+			[.33, .34, .33]		30 		20
+
 Basic Outline
 =============
 
