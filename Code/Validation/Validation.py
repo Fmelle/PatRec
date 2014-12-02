@@ -36,7 +36,7 @@ NUM_USR_RUN = 10
 
 # Parameters
 params = {}
-params['weights'] = [0, 0, 1] # [userWeight, simUserWeight, establishmentWeight]
+params['weights'] = [.33, .34, .33] # [userWeight, simUserWeight, establishmentWeight]
 params['knnK'] = 10
 params['numPrincipalComp'] = 10
 
