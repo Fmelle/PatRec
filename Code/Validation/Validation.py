@@ -10,6 +10,19 @@ Perform validation based by predicting ratings based on similar users
 # Imports and set-up
 #===============================================================================
 
+import argparse
+parser = argparse.ArgumentParser(description = \
+                    'Validate our Yelp prediction engine')
+parser.add_argument('-d', '--debug', help='Debug mode',   action='store_true')
+parser.add_argument('-s', '--save',  help='Save results', action='store_true')
+parser.add_argument('-k', '--knnk',  help='K for KNN', type=int, required=True)
+parser.add_argument('-c', '--pcomp', help='# principal components', type=int, required=True)
+parser.add_argument('-w', '--weights', \
+    help='weights for the user, similar users, and the establishment, in that order', \
+    nargs='+', type=float, required=True)
+parser.add_argument('-v', '--verbose',help='Print statements',action='store_true')
+args = parser.parse_args()
+
 # Fix path problem
 import sys, os, json
 sys.path.append(os.path.abspath('..'))
@@ -26,8 +39,8 @@ from datetime import datetime
 # Script parameters
 #===============================================================================
 
-SAVE = True
-DEBUG = False
+SAVE = args.save
+DEBUG = args.debug
 
 #===============================================================================
 # Model parameters
@@ -35,9 +48,9 @@ DEBUG = False
 
 # Parameters
 params = {}
-params['weights'] = [1, 0, 1] # [userWeight, simUserWeight, establishmentWeight]
-params['knnK'] = 20
-params['numPrincipalComp'] = 30
+params['weights'] = args.weights # [userWeight, simUserWeight, establishmentWeight]
+params['knnK'] = args.knnk
+params['numPrincipalComp'] = args.pcomp
 
 NOTES = "Parameters: " + str(params)
 NOTES += " This is a full feature matrix"
@@ -62,13 +75,13 @@ reviewData = pd.read_csv(reviewFile,
 #===============================================================================
 # Init model
 #===============================================================================
-
-print 'Running validation with:'
-print 'params: ', params
-print 'usrFile: ', usrFile
-print 'testFile: ', testUsrFile
-print 'reviewFile: ', reviewFile
-print
+if args.verbose:
+    print 'Running validation with:'
+    print 'params: ', params
+    print 'usrFile: ', usrFile
+    print 'testFile: ', testUsrFile
+    print 'reviewFile: ', reviewFile
+    print
 
 # Init recommendation
 predicter = yr.YelpRecommendation(usrData, reviewData,
@@ -111,7 +124,7 @@ for usr in list(testUsr.index):
         counts['off'][int(abs(x))] += 1
 
     # Progress report
-    print 'Finished (%d/%d):'%(i,N), counts
+    if args.verbose: print 'Finished (%d/%d):'%(i,N), counts
 
     if DEBUG: break
 
@@ -122,7 +135,7 @@ for usr in list(testUsr.index):
 # Mean sqr err
 if counts['nPred'] != 0:
     counts['MSE'] = counts['sqrE'] / counts['nPred']
-    print counts
+    if args.verbose: print counts
 
 outData = counts
 outData['numUsr'] = N
@@ -135,6 +148,9 @@ outData['date'] = t
 # Add notes on model parameters
 outData['notes'] = NOTES
 outData['params'] = str(params)
+
+print params['weights'], ',', params['knnK'], ',', params['numPrincipalComp'], \
+      ',', counts['MSE']
 
 # Save at json by timestamp
 if SAVE and not DEBUG:

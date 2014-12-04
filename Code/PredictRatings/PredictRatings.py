@@ -57,28 +57,50 @@ class PredictRatings(object):
         if len(similarUsrs) == 0:
             return []
 
+        # Get rid of users we don't have info for
+        badUsrs = list();
+        for user_id in similarUsrs:
+            if user_id not in s.knownRatings.index:
+                badUsrs.append(user_id)
+        for user_id in badUsrs:
+            similarUsrs = similarUsrs.drop(user_id)
+        
         # Filter ratings to only look at similar users
         ratings = s.knownRatings.loc[pd.IndexSlice[similarUsrs,:],:]
 
         # Take mean of establishment reviews from sililar users
         similarMeans = ratings.mean(0, level='business_id')
+        ratingsReset = ratings.reset_index()
+
 
         # Get establishment means over all users
         # TODO cleaner way?
-        establishments = ratings.reset_index().loc[:,'business_id']
+        establishments = ratingsReset.loc[:,'business_id']
         establishments = establishments.unique()
         estRatings = s.knownRatings.loc[pd.IndexSlice[:,establishments],:]
         estMeans = estRatings.mean(0, level='business_id')
+        establishmentUsrCounts = pd.crosstab([ratingsReset.user_id], \
+                        [ratingsReset.business_id]).sum(0)
 
         if usrId in s.knownRatings.index:
             # Factor in the user's average rating
             usrAvg = s.knownRatings.loc[usrId,:].mean()
             prediction = similarMeans*s.SIM_WEIGHT + usrAvg*s.USR_WEIGHT + \
                          estMeans*s.EST_WEIGHT
+            # If there are not enough similar users for that restaurant, discard
+            # the similar users score
+            for business_id in prediction.index:
+                # if there aren't enough similar users or they are close to the
+                # business mean, do not consider them
+                if (establishmentUsrCounts.ix[business_id] < 3 or 
+                    abs(similarMeans.ix[business_id].stars - \
+                        estMeans.ix[business_id].stars) < .5):
+                    prediction.ix[business_id] = \
+                        usrAvg*.5 + estMeans.ix[business_id].stars*.5
         else:
             # User not in index so just predict on similar users
             prediction = similarMeans
-
+        
         return prediction
 
 
