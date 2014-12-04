@@ -114,7 +114,6 @@ While users and restaurants are necessary input information to structure our dat
 
 \section{Algorithm}
 
-\subsection{The Pipeline}
 \begin{figure}[t]
 \begin{center}
 \fbox{\rule{0pt}{2in}
@@ -124,6 +123,8 @@ While users and restaurants are necessary input information to structure our dat
 \label{fig:long}
 \label{fig:onecol}
 \end{figure}
+
+** TODO : Assure most precise description of pipeline given our final algortihm -- does it output an actual restaurant or a MSE for our predictions etc **
 
 Our pipeline takes in a given user, and outputs a restaurant recommendation. In order to do this we first create a feature vector for the person, and find determine the most similar users based on these features. We then see how these similar users rated restaurants the user has not been to, and thus evaluate how the user would rate those restaurants. Finally, the restaurant with the highest expected rating is returned to the user.
 
@@ -189,7 +190,7 @@ Our solution takes a weighted average of the reviews from those users for every 
 As we currently make the following predictions based on a simple average analysis of equally weighted ratings we will seek to expand this part into something more subjective and normalized in terms of the test user. Even though the most similar users at this point are already optimized for the test user, their appreciation of restaurants through ratings are not. \\[.5em]
 \indent A first step is to rather than filling the matrix of users versus restaurants with extracted ratings that the individual users have provided, to fill it with something more complex that we have named DigIt factors. These factors are a weighted evaluation of the users review to the individual restaurant that optimally takes the individual users general evaluation and taste into account. With this approach we can normalize the ratings over all the users, such that a DigIt of say 4 out of 5 will imply the same appreciation across users. The final prediction will then be a numerical evaluation of normalized user reviews in DigIt factors along with the provided average basline evaluation of the restaurant and the test user's particular taste defined through personal visitation and review statistics.
 
-\subsection{Results}
+\section{Results}
 **TODO: Everyone / Spencer **
 
 - Table of different feature vectors with experimentally results
@@ -238,6 +239,7 @@ As mentioned our extracted data set contains users, restaurants and reviews are 
 
 %uncomment and add \cite{}'s for bilbiography. fill in egbib.bib file
 {\small
-\bibliography{egbib}}
+\bibliography{egbib}
+\bibliographystyle{plain}}
 
 \end{document}
