@@ -132,6 +132,8 @@ While users and restaurants are necessary input information to structure our dat
 \label{fig:onecol}
 \end{figure}
 
+** TODO : Assure most precise description of pipeline given our final algortihm -- does it output an actual restaurant or a MSE for our predictions etc **
+
 Our pipeline takes in a given user, and outputs a restaurant recommendation. In order to do this we first create a feature vector for the person, and find determine the most similar users based on these features. We then see how these similar users rated restaurants the user has not been to, and thus evaluate how the user would rate those restaurants. Finally, the restaurant with the highest expected rating is returned to the user.
 
 \subsection{Parsing the Data and Implementing our models}
@@ -212,12 +214,12 @@ While our algorithm outputs a restaurant recommendation it is tough to validate 
 
 \section{Results}
 
-\subsection*{Overview}
+\subsection{Overview}
 We discovered that 
 
-\subsection*{Baseline}
+\subsection{Baseline}
 
-\subsection*{Parameter Tuning}
+\subsection{Parameter Tuning}
 
 - Params
 - Baseline
@@ -271,6 +273,7 @@ Spotify and other music services provide an option for users to explore music ou
 
 %uncomment and add \cite{}'s for bilbiography. fill in egbib.bib file
 {\small
-\bibliography{egbib}}
+\bibliography{egbib}
+\bibliographystyle{plain}}
 
 \end{document}
