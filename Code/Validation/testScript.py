@@ -1,24 +1,23 @@
 from os import system
 from sys import stdout
-
-weights = ['.5 0 .5', '.4 .2. 4']
+weights = ['.5 0 .5', '.4 .2 .4']
 
 print "Running on differing PCA components..."
 for weight in weights:
-    for comp in xrange(20, 101, 20):
+    command = ""
+    for comp in xrange(20, 21, 20):
         command = 'python Validation.py -k 50 -c ' + str(comp) + ' -w ' + weight
-        print command + ' ...',
+        print "Running " + command + '...',
         stdout.flush()
-        command = command + ' >> results.csv'
-        system(command)
-        print "completed"
+        system(command + ">> results.csv")
+        print "finished"
 
 print "Running on differing knnKs..."
 for weight in weights:
+    command = ""
     for knnk in xrange(10, 101, 10):
-        command = 'python Validation.py -k ' + str(knnk) + ' -c 100 -w ' + weight
-        print command + ' ...',
+        command = 'python Validation.py -k '+ str(knnk) + ' -c 100 -w ' + weight
+        print "Running " + command + '...',
         stdout.flush()
-        command = command + ' >> results.csv'
-        system(command)
-        print "completed"
+        system(command + ">> results.csv")
+        print "finished"
