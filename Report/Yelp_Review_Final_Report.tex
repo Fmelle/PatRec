@@ -66,7 +66,12 @@ Our solution is to fix this problem by giving a person personalized recommendati
 \subsection{Similar work}
 The core concept of our pipeline is based on solutions for the 2006-2009 Netflix Prize. This contest was aimed at improving Netflix' algorithm for providing user-specific movie recommendations. It went on over several years with the goal of beating Netflix original recommendation algorithm by a tenth. Although quite extensive algorithms went into the final solutions the general principles has been the inspiration for our solution and we will continue to use papers the contest produced as inspiration for our continued work with the project\cite{KorBell}\cite{BellKor}.
 
+**TODO
+
+%=====================================================================
+
 \section{Data Set}
+
 \subsection{Overview}
 Yelp holds a massive amount of data to their disposal based on everything that users provide in terms of personal information, business information and everything they put into their reviews. For our purpose Yelp provides a subset of this based on a specific region or city, generated with the same attributes as the real world data, which for our case is Phoenix, Arizona. This provides us with a total of 14303 restaurants and 1.2M reviews, all connected to Phoenix through around 250000 users. The data is originally compiled JSON, which we have expanded to reduce and edit, and then convert to a matrix-based CSV-format for classification and prediction.
 
@@ -112,12 +117,15 @@ While users and restaurants are necessary input information to structure our dat
 	}
 \end{verbatim}
 
+%=====================================================================
+
 \section{Algorithm}
 
+\subsection{Overview}
 \begin{figure}[t]
 \begin{center}
 \fbox{\rule{0pt}{2in}
-   \includegraphics[width=0.6\linewidth]{WorkFlow.png}}
+   \includegraphics[width=0.3\linewidth]{WorkFlow.png}}
 \end{center}
    \caption{A workflow diagram of our pipeline.}
 \label{fig:long}
@@ -127,8 +135,6 @@ While users and restaurants are necessary input information to structure our dat
 ** TODO : Assure most precise description of pipeline given our final algortihm -- does it output an actual restaurant or a MSE for our predictions etc **
 
 Our pipeline takes in a given user, and outputs a restaurant recommendation. In order to do this we first create a feature vector for the person, and find determine the most similar users based on these features. We then see how these similar users rated restaurants the user has not been to, and thus evaluate how the user would rate those restaurants. Finally, the restaurant with the highest expected rating is returned to the user.
-
-\section{Process}
 
 \subsection{Parsing the Data and Implementing our models}
 In order to perform a proper restaurant predictions and give good recommendations we had to combine all the above data provided in order to map and characterize the users in terms of taste. Mapping users based on their reviews and the general restaurant information is a sizeable, but necessary data operation that was completed through usage of Python's PANDAS module and the NumPy libraries.. **TODO: Gavi our usage of Pandas, NumPy and other libraries to parse, extract and establish the data**.
@@ -178,29 +184,56 @@ Our solution creates a feature vector of each user and uses the k Nearest Neighb
 
 The validation the number of k similar users to keep was done statistically using a K-Fold Cross-Validation Model for K (K=10 partitions I presume??) partitions tracking the MSE inducing for k ranging between 1 and X. 
 
-** Results etc **
-
-\subsection{Evaluating User Reviews}
-Our solution takes a weighted average of the reviews from those users for every restaurant the person has not visited to evaluate how that person would rate those restaurants.
+\subsection{Predicting User Reviews}
+In the next step of our pipeline we took in the similar users and their reviews. From the pool of restaurants reviewed by the similar users we predicted a score for each restaurant for a given user using the following weighted average for each restaurant $i$:
+\[stars_{i} = w_1 * avg_{usr} + w_2 * avg_{i} + w_3 * similarUserAvg_{i}\]
+ where $w_1 + w_2 + w_3 = 1$. $similarUserAvg_i$ was average review for restaurant $i$ from the similar users. Not all similar users would have reviewed the restaurant so this average may have been over as few as 1 to 2 similar users. 
 \\[0.5em]
-\indent Right now, to guess a user review, we take two things into account: the ratings the similar users rated a restaurant and the average rating of the restaurant. We weight each by a half to guess how a user would rate a restaurant.
+\indent As will be shown below in results the above weighting method did not work well. We were not able to beat the baseline. Therefore we amended the prediction scheme. The basic idea behind prediction is that a rating will likely fall near the restaurant average. Deviation from this average is more likely if there are multiple similar users who liked the restaurant and their ratings are quite different than the restaurant average. Our basic algorithm:
+\begin{verbatim}
+Per restaurant i
+  if similarUsrRatings(i) > V and
+      numSimilarUserRating(i) > K
+    prediction = w1*userAvg
+                 +w2*similarUsrAvg(i)
+                 +w3*resturantAvg(i)
+  else
+    prediction = .5*userAvg +
+                 .5*resturantAvg(i)
+\end{verbatim}
 
-** TODO: Spencer - our updated prediction and validation model **
+\subsection{Recommendation}
+The final step is to recommend a restaurant based on the predicted ratings. We simply recommend the highest predicted rated restaurant.
 
-As we currently make the following predictions based on a simple average analysis of equally weighted ratings we will seek to expand this part into something more subjective and normalized in terms of the test user. Even though the most similar users at this point are already optimized for the test user, their appreciation of restaurants through ratings are not. \\[.5em]
-\indent A first step is to rather than filling the matrix of users versus restaurants with extracted ratings that the individual users have provided, to fill it with something more complex that we have named DigIt factors. These factors are a weighted evaluation of the users review to the individual restaurant that optimally takes the individual users general evaluation and taste into account. With this approach we can normalize the ratings over all the users, such that a DigIt of say 4 out of 5 will imply the same appreciation across users. The final prediction will then be a numerical evaluation of normalized user reviews in DigIt factors along with the provided average basline evaluation of the restaurant and the test user's particular taste defined through personal visitation and review statistics.
+\subsection{Validating Results}
+While our algorithm outputs a restaurant recommendation it is tough to validate based upon a single recommendation since a baseline cannot be easily established. The issue is that we do not have a way to provide real users our recommendation and see how well they like the recommendation. However, validating our rating prediction is simpler because we can compare to the actual ratings that users gave to restaurants. While we are able to predict on the restaurant rating we are not able to validate the actual choice of recommended restaurants.
+\\[0.5em]
+\indent Our validation process is to run our algorithm with a training set of users and reviews and then predict previously known ratings for users from a testing set. Because our system predicts ratings for only restaurants visited by the similar users, there are usually more predicted ratings than actual reviews. Therefore we take the intersection of the predicted ratings and the actual ratings and use this set to calculate our error.
+
+%=====================================================================
 
 \section{Results}
-**TODO: Everyone / Spencer **
 
-- Table of different feature vectors with experimentally results
+\subsection{Overview}
+- Did not beat baseline
 
-- Baseline comparison with baseline description and evaluation
+\subsection{Parameter}
+Our basic model parameters were $K_{KNN}$ for KNN, $w_{1}, w_2, w_3$ for prediction and $P$ for the number of principal components used.
 
-\subsection{Validation of output}
-We currently have yet to implement a fully functioning validation model of our output. The validation scheme should score our predictions based on a differentiation towards ground-truth results. We will for this exclude some of our training data for validation purposes preferably by taking the users with the most reviews, i.e. by example the top 50 users which have a lot of reviews to predict on. By removing a set of their reviews we may effectively look at the RMSE between our predictions and their actual reviews to get an idea of how well our complete algorithm works.
-\\[.5em]
-\indent We will naturally look at getting a validation scheme up and running as soon as possible to get the complete pipeline up and running before we start looking at increasing our performance in order to measure it.
+We tried a range of $K_{KNN}$ and $P$ values to find the best and then selected weights based upon intuition.
+
+\subsection{Baseline}
+
+\subsection{Parameter Tuning}
+
+- Params
+- Baseline
+- PCA comp
+
+** TODO Table KNN K vs MSE, baseline, non-baseline
+** TODO Table PCA Comp vs MSE, baseline, non-baseline
+
+%=====================================================================
 
 \section{Challenges}
 
@@ -225,9 +258,10 @@ We currently have yet to implement a fully functioning validation model of our o
 \subsection{Review Sparsity}
 One of our base assumptions is that users and establishments have enough reviews for us to extrapolate future reviews. However we may be pushing this limit. As can be seen in Figure~\ref{fig:usrCnt} a substantial majority of users, $85\%$, have five or fewer reviews. Since reviews likely provide the best information on user tastes we will likely have trouble classifying users by reviews alone. Likewise establishments also have a small number of reviews which will make it hard to predict potential ratings. However this is not quite as much of a problem as the user data. As can be seen in Figure~\ref{fig:bizCnt}, the majority, $60\%$, of businesses have fever than ten reviews.
 
-
 \subsection{Data Cleanliness}
 We have encountered issues with duplicate reviews as well as establishments not from the Phoenix area. Both are removed from our data set.
+
+%=====================================================================
 
 \section{Future work}
 
@@ -236,6 +270,11 @@ Our current classifier, the KNN, is of the Deterministic Association type, makin
 
 \subsection{Geographic Restrictions}
 As mentioned our extracted data set contains users, restaurants and reviews are somehow related to Phoenix, AZ. Although, this does not mean that every user, restaurant or review is directly connected to this region. If a user has done one review of one restaurant in Phoenix, all his other reviews and effectively the corresponding restaurants is included in the data set. For now we have looked away from geographical locations, in order to have our algorithm give the best possible recommendation regardless of its location, but this is something that would be interesting to give more attention on a next iteration.
+
+\subsection{Discovery}
+Spotify and other music services provide an option for users to explore music outside of their current preferences or to add diversity. This project may be more useful to Yelp as a feature that provides a unique recommendation. Our algorithm is biased towards recommending similar restaurants which may not be what users are actually looking for when they ask for a recommendation.
+
+%=====================================================================
 
 %uncomment and add \cite{}'s for bilbiography. fill in egbib.bib file
 {\small
