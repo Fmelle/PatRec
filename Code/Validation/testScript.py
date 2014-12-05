@@ -1,6 +1,6 @@
 from os import system
 from sys import stdout
-weights = ['.5 0 .5', '.4 .2 .4']
+weights = ['.5 0 .5', '.33 .33 .33']
 
 print "Running on differing PCA components..."
 for weight in weights:
@@ -11,7 +11,7 @@ for weight in weights:
         stdout.flush()
         system(command + ">> results.csv")
         print "finished"
-
+"""
 print "Running on differing knnKs..."
 for weight in weights:
     command = ""
@@ -21,3 +21,4 @@ for weight in weights:
         stdout.flush()
         system(command + ">> results.csv")
         print "finished"
+"""
