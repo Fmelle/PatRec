@@ -5,7 +5,7 @@ weights = ['.5 0 .5', '.4 .2 .4']
 print "Running on differing PCA components..."
 for weight in weights:
     command = ""
-    for comp in xrange(20, 21, 20):
+    for comp in xrange(20, 101, 20):
         command = 'python Validation.py -k 50 -c ' + str(comp) + ' -w ' + weight
         print "Running " + command + '...',
         stdout.flush()
