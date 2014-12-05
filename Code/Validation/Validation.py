@@ -150,7 +150,7 @@ outData['notes'] = NOTES
 outData['params'] = str(params)
 
 print params['weights'], ',', params['knnK'], ',', params['numPrincipalComp'], \
-      ',', counts['MSE']
+      ',', counts['MSE'], counts['off']
 
 # Save at json by timestamp
 if SAVE and not DEBUG:
@@ -158,4 +158,4 @@ if SAVE and not DEBUG:
     FP = open(fName,'w')
     json.dump(counts, FP, sort_keys=True, indent=2)
     FP.close()
-    print 'Saved to ', fName
+    if args.verbose: print 'Saved to ', fName
