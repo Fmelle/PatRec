@@ -89,14 +89,14 @@ class PredictRatings(object):
                          estMeans*s.EST_WEIGHT
             # If there are not enough similar users for that restaurant, discard
             # the similar users score
-            for business_id in prediction.index:
-                # if there aren't enough similar users or they are close to the
-                # business mean, do not consider them
-                if (establishmentUsrCounts.ix[business_id] < 3 or 
-                    abs(similarMeans.ix[business_id].stars - \
-                        estMeans.ix[business_id].stars) < .5):
-                    prediction.ix[business_id] = \
-                        usrAvg*.5 + estMeans.ix[business_id].stars*.5
+            # for business_id in prediction.index:
+            #     # if there aren't enough similar users or they are close to the
+            #     # business mean, do not consider them
+            #     if (establishmentUsrCounts.ix[business_id] < 3 or 
+            #         abs(similarMeans.ix[business_id].stars - \
+            #             estMeans.ix[business_id].stars) < .5):
+            #         prediction.ix[business_id] = \
+            #             usrAvg*.5 + estMeans.ix[business_id].stars*.5
         else:
             # User not in index so just predict on similar users
             prediction = similarMeans

@@ -19,6 +19,11 @@
 \def\cvprPaperID{****} % *** Enter the CVPR Paper ID here
 \def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
 
+% Weights for prediction
+\newcommand{\w1}{\ensuremath{w_{user}}}
+\newcommand{\w2}{\ensuremath{w_{similarUsers}}}
+\newcommand{\w3}{\ensuremath{w_{restaurantAvg}}}
+
 % Pages are numbered in submission mode, and unnumbered in camera-ready
 %\ifcvprfinal\pagestyle{empty}\fi
 \setcounter{page}{1}
@@ -180,10 +185,10 @@ The validation the number of k similar users to keep was done statistically usin
 
 \subsection{Predicting User Reviews}
 In the next step of our pipeline we took in the similar users and their reviews. From the pool of restaurants reviewed by the similar users we predicted a score for each restaurant for a given user using the following weighted average for each restaurant $i$:
-\[stars_{i} = w_1 * avg_{usr} + w_2 * avg_{i} + w_3 * similarUserAvg_{i}\]
- where $w_1 + w_2 + w_3 = 1$. $similarUserAvg_i$ was average review for restaurant $i$ from the similar users. Not all similar users would have reviewed the restaurant so this average may have been over as few as 1 to 2 similar users. 
+\[stars_{i} = \w1 * avg_{usr} + \w2 * similarUserAvg_{i} + \w3 * avg_{i} \]
+ where $\w1 + \w2 + \w3 = 1$. $similarUserAvg_i$ was average review for restaurant $i$ from the similar users. Not all similar users would have reviewed the restaurant so this average may have been over as few as 1 to 2 similar users. 
 \\[0.5em]
-\indent As will be shown below in results the above weighting method did not work well. We were not able to beat the baseline. Therefore we amended the prediction scheme. The basic idea behind prediction is that a rating will likely fall near the restaurant average. Deviation from this average is more likely if there are multiple similar users who liked the restaurant and their ratings are quite different than the restaurant average. Our basic algorithm:
+\indent As will be shown below in results the above weighting method did not work well initially. We were not able to beat the baseline. Therefore we amended the prediction scheme. The basic idea behind prediction is that a rating will likely fall near the restaurant average. Deviation from this average is more likely if there are multiple similar users who liked the restaurant and their ratings are quite different than the restaurant average. Our basic algorithm:
 \begin{verbatim}
 Per restaurant i
   if similarUsrRatings(i) > V and
@@ -208,43 +213,58 @@ While our algorithm outputs a restaurant recommendation it is tough to validate 
 
 \section{Results}
 
+\begin{figure}[t]
+\begin{center}
+   \includegraphics[width=0.9\linewidth]{knnErr.png}
+\end{center}
+   \caption{A plot of rounded star error for varying knn parameter.}
+\label{fig:knnErr}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+   \includegraphics[width=0.9\linewidth]{knnMSE.png}
+\end{center}
+   \caption{A plot of star mean square error for varying knn parameter.}
+\label{fig:knnMSE}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+   \includegraphics[width=0.9\linewidth]{pcaMSE.png}
+\end{center}
+   \caption{A plot of star mean square error for varying pca parameter.}
+\label{fig:pcaMSE}
+\end{figure}
+
 \subsection{Overview}
-Overall we did not beat the baseline. Over a range of KNN and PCA parameters we were not able to beat our baseline.
+Overall we were able to beat our baseline, at least in terms of rounded predicted star rating but not in terms of mean square error (MSE). We were able to vary the KNN K, weights and number of principal components until we had some success.
 
-Why not? Be believe that our results show that a given user's review is generally closer to the restaurant average rather than the similar user's average rating. Basically our the premise that similar users' preferences are a proxy for a users' preferences does not seem to be valid.
-
-- Number changed over baseline
-- 
-
-- Did not beat baseline
-- Why not?
-- baseline is too similar to our prediction model
-- Similar users don't really have enough effect
-- You are closer to the avg than you are to the avg similar users
-
-- PCA: Overfitting too close, then MSE spike and drop (stop overfitting)
-- KNN eventually have too many similar users
+In the end our belief that similar users have some predictive qualities for restaurant ratings proved correct.
 
 \subsection{Parameters}
-Our basic model relied on five input parameters:
+Our basic model relied on five input parameters: the $K_{KNN}$ for KNN, the number of principal components ($P$) and three weights applied to our three parameters used to make a prediction (\w1, \w2, \w3). The 
 
-\begin{enumerate}
-\item The $K_{KNN}$ for KNN
-\item The number of principal components the user vector was projected onto, $P$
-\item Three weights applied to our three parameters used to make a prediction: 
-\begin{enumerate}
-\item $w_{u}$, the weight given to the user's average review score
-\item $w_{s}$, the weight given to how a user's $K_{KNN}$ similar users rated the restaurant in question
-\item $w_{r}$, the weight given to the restaurant's average review score
-\end{enumerate}
-\end{enumerate}
-We tried a range of $K_{KNN}$ and $P$ values to find the best and then selected weights based upon intuition. For the three weights, we used $w_{u}=.33$, $w_{s}=.33$, and $w_{r}=.33$, evenly weighting all three factors.
+We tried a range of $K_{KNN}$ and $P$ values to find the best in terms of error and then selected weights based upon intuition.
 
-\subsection{Baseline}
+\subsection{Baseline and Weighted Trials}
 
-For our baseline, we used $w_{u}=.5$, $w_{s}=0$, and $w_{r}=.5$. Our goal was to see how our algorithm would perform without any knowledge of similar users, so we kept $w_{u}$ and $w_{r}$ weighted evenly, but removed $w_{s}$ entirely.
+For our baseline, we used $\w1=.5$, $\w2=0$, and $\w3=.5$. Our goal was to see how our algorithm would perform without any knowledge of similar users, so we kept \w1 and \w3 weighted evenly, but removed \w2 entirely.
+
+For the three weights, we chose to make the weights even: $\w1=.33$, $\w2=.33$, and $\w3=.33$. This meant that the similar users were factored in but we kept the user average and restaurant average to keep the predictions reasonably close to those averages.
+
+\subsection{MSE vs Rounded Star Mean Error}
+- difference between two metrics
 
 \subsection{Parameter Tuning}
+- graphs
+- curve behavior
+
+\subsection{Conclusions}
+- works in what matters
+- why MSE not so good
+- overall impact of similar users
+- how many similar users were actually necessary
 
 %=====================================================================
 
