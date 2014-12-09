@@ -56,27 +56,29 @@ Carnegie Mellon University\\
 
 %%%%%%%%% ABSTRACT
 \begin{abstract}
-   When looking for somewhere to eat, people often read online reviews on Yelp. Using machine learning techniques we aimed make this process simpler by giving users specific restaurant recommendations. Reducing their time spent looking through many possible places to eat by offering a specific or small subset of restaurants based on the reviews of similar users, we believe the overall user experience and general profit from using Yelp can be improved. This gives the user a better chance of success in finding a great restaurant for his or her individual taste.
-
-   
+   When looking for somewhere to eat, people often read online reviews on Yelp. Using machine learning techniques we aimed make this process simpler by giving user specific restaurant recommendations. We believe the overall user experience and general profit from using Yelp can be improved by offering a specific subset of recommended restaurants based on the reviews of similar users. This gives the user a better chance of success in finding a great restaurant for his or her individual taste.  
 \end{abstract}
 
 %%%%%%%%% BODY TEXT
 \section{Introduction}
 
 \subsection{The Problem}
-Yelp is a popular destination for people looking for a place to eat based on other people's experiences and reviews, gradually becoming a more important factor in their decision-making. While the provided information is quite useful compared to having no information about the restaurant at all, someone looking for a recommendation is bound to the opinions of strangers, who perhaps have very different tastes in food.
+Yelp is a popular destination for people looking for a place to eat based on other people's experiences and reviews. While the provided information is quite useful compared to having no information about the restaurant at all, someone looking for a recommendation is bound to the opinions of strangers who perhaps have very different tastes in food.
 \subsection{The Solution}
-Our solution is to fix this problem by giving a user personalized recommendations. Based on the user's past reviews, we aim to find a subset of Yelp users with similar taste and predict the scores that the user would give to restaurants he or she has not yet visited. This allows the person to try a new restaurant with a greater sense of security that he or she will enjoy the experience and not waste money.
+Our solution is to fix this problem by giving a user personalized recommendations. Based on the user's past reviews, we aim to find a subset of Yelp users with similar tastes and predict the scores that the user would give to restaurants he or she has not yet visited. This allows the user to try a new restaurant with a greater sense of security that he or she will enjoy the experience and not waste money.
 \subsection{Similar work}
-The core concept of our pipeline is based on solutions for the 2006-2009 Netflix Prize. This contest was aimed at improving Netflix' algorithm for providing user-specific movie recommendations. It went on over several years with the goal of beating Netflix original recommendation algorithm by a tenth. Although quite extensive algorithms went into the final solutions the general principles has been the inspiration for our solution and we will continue to use papers the contest produced as inspiration for our continued work with the project\cite{KorBell}\cite{BellKor}.\\
+The core concept of our pipeline is based on a key idea from the 2006-2009 Netflix Prize. This contest was aimed at improving Netflix' algorithm for providing user-specific movie recommendations. It went on over several years with the goal of beating Netflix original recommendation algorithm by a tenth. Although quite extensive algorithms went into the final solutions the general principles has been the inspiration for our solution and we will continue to use papers the contest produced as inspiration for our continued work with the project\cite{KorBell}\cite{BellKor}.\\
+
 \indent In the 2008 paper, Bell, Koren, and Volinsky describe how they used a few different models to predict how users would rate movies including K$^{th}$ Nearest Neighbor (KNN), regression, and matrix factorization, and combined the results. Being time-limited, we based our approach on one of their more successful approaches, the KNN model. We chose to use user vectors, one of the approaches to KNN they tried and had success with.\\
-\indent In 18-697 this fall, another group of three attempted to solve the same problem of predicting Yelp reviews. They tried three independent methods\cite{ClassPresentation}
+
+\indent In 18-697 this fall, another group attempted to solve the same problem of predicting Yelp reviews. They tried three independent methods\cite{ClassPresentation}
+
 \begin{itemize}
 \item Using correlation coefficients between businesses by finding the users who rated both and vectorizing, and using this correlation to predict ratings.
 \item Using KNN to find similar users, similar to our method. However in order to find similar users they first naively predicted how all users would score all restaurants, then found similar users, then updated the naive predictions.
 \item An alternating least square with weighted-$\lambda$-regularization algorithm.
 \end{itemize}
+
 This group found that the MSE between their predicted ratings and the real ratings given by users were $1.73$, $1.52$, and $1.52$ respectively. Our results, shown below, had MSE less than half of theirs. We believe our starting point of weighting the user's average score and the restaurant's average score instead of just relying on similar users is the reason our KNN algorithm fared much better than theirs.
 
 %=====================================================================
@@ -84,10 +86,10 @@ This group found that the MSE between their predicted ratings and the real ratin
 \section{Data Set}
 
 \subsection{Overview}
-Yelp holds a massive amount of data at their disposal, as users provide personal information, business information, and their reviews. For our purpose, Yelp provides a subset of this data based in Phoenix, Arizona, generated with the same attributes as the real world data. This provides us with a total of 14303 restaurants and 1.2M reviews, all connected to Phoenix through around 250000 users. The data is originally compiled JSON, which we have expanded to reduce and edit, and then convert to a matrix-based CSV-format for classification and prediction.
+Yelp holds a massive amount of data at their disposal, as users provide personal information, business information, and their reviews. For our purpose, Yelp provides a subset of this data based in Phoenix, Arizona, generated with the same attributes as the real world data. This provides us with a total of 14,303 restaurants and 1.2M reviews, all connected to Phoenix through around 250,000 users. The data is originally compiled JSON, which we have expanded to reduce and edit, and then convert to a matrix-based CSV-format for classification and prediction.
 
 \subsection{Users}
-In order to generate a user characterizing model we were inclined to extract all the elite users as they contain the most data. Yelp classified 20045 individuals as elite, all with an average of 200 reviews each. In addition we have randomly extracted 2014 sample users not contained within the training data, to test our algorithm on, as well as the top 50 reviewers from the elite users to test the pipeline on. All users are in the same reduced format, only containing the parameters we deem necessary for characterizing the particular users. Below is an example of user-specific data we will use as basis for our models.
+In order to generate a user characterizing model we were inclined to extract all the elite users as they contain the most data. Yelp classified 20,045 individuals as elite, all with an average of 200 reviews each. In addition we have randomly extracted 2,014 sample users not contained within the training data, to test our algorithm on, as well as the top 50 reviewers from the elite users to test the pipeline on. All users are in the same reduced format, only containing the parameters we deem necessary for characterizing the particular users. Below is an example of user-specific data we will use as basis for our models.
 
 \begin{verbatim}
 {
@@ -99,7 +101,7 @@ In order to generate a user characterizing model we were inclined to extract all
 \end{verbatim}
 
 \subsection{Restaurants}
-As Yelp does not limit themselves to restaurants, neither does the original data set. Extracting these was the first part of our process. The restaurants contains a lot of information that we would not find particularly useful for this iteration of our prediction algorithm such as as \textit{address}, \textit{hours}, \textit{neighborhoods}, \textit{geographical coordinates}, \textit{Wi-fi}, \textit{Ambiance}, \textit{Noise level} and \textit{Attire}, so we removed them. We finally end up with a set of 14303 restaurants. One example of information we will use is detailed below:
+As Yelp does not limit themselves to restaurants, neither does the original data set. Extracting these was the first part of our process. The restaurants contains a lot of information that we do not find particularly useful for this iteration of our prediction algorithm such as as \textit{address}, \textit{hours}, \textit{neighborhoods}, \textit{geographical coordinates}, \textit{Wi-fi}, \textit{Ambiance}, \textit{Noise level} and \textit{Attire}, so we removed them. We finally end up with a set of 14,303 restaurants. One example of information we use is detailed below:
 
 \begin{verbatim}
 	{
@@ -117,7 +119,7 @@ As Yelp does not limit themselves to restaurants, neither does the original data
 \end{verbatim}
 
 \subsection{Reviews}
-While users and restaurants are necessary input information to structure our data and our results, the reviews are the backbone of our predictions and binds all of the data together. With a total of 1.2M reviews we chose to look away from the actual review text, as feature generation through analysis of this would become too significant in our work progress. This lead to us only preserving the following structure of a review.
+While users and restaurants are necessary input information to structure our data and our results, the reviews are the backbone of our predictions and binds all of the data together. With a total of 1.2M reviews we ignore from the actual review text, as feature generation through analysis of this text would become too complex. This lead to us only preserving the following structure of a review.
 
 \begin{verbatim}
 	{
@@ -136,20 +138,19 @@ While users and restaurants are necessary input information to structure our dat
 \begin{figure}[t]
 \begin{center}
 \fbox{\rule{0pt}{2in}
-   \includegraphics[width=0.3\linewidth]{ProjectWorkFlow.png}}
+   \includegraphics[width=0.25\linewidth]{ProjectWorkFlow.png}}
 \end{center}
    \caption{A workflow diagram of our pipeline.}
-\label{fig:long}
-\label{fig:onecol}
+\label{fig:workflow}
 \end{figure}
 
-Our pipeline takes in a given user, and outputs a restaurant recommendation. In order to do this we first create a feature vector for the person, and determine the most similar users based on these features. We then see how these similar users rated restaurants the user has not been to, and predict how the user would rate those restaurants. Finally, the restaurant with the highest expected rating is returned to the user.
+Our pipeline takes in a given user, and outputs a restaurant recommendation. In order to do this we first create a reduced feature vector for the person, and determine the most similar users based on these features. We then see how these similar users rated restaurants the user has not been to, and predict how the user would rate those restaurants. Finally, the restaurant with the highest expected rating is returned to the user. See Figure~\ref{fig:workflow} for an overview.
 
 \subsection{Parsing the Data and Implementing our models}
-In order to give good recommendations we had to combine all the above data and map and characterize the users in terms of taste. Mapping users based on their reviews and the general restaurant information is a sizeable, but necessary data operation that was completed through usage of Python's PANDAS module and the NumPy libraries. PANDAS allowed us to read and save .csv files from and to data frames, which, built on top of NumPy arrays, are strictly typed true C arrays and invoke C calls, vastly decreasing run time. To perform PCA and KNN, we used Python's scikit-learn machine learning library. Also built on top of NumPy, it was easy to seamlessly incorporate the library with our existing code. All of the code is visible at \url{https://github.com/sbarton272/PatRec}.
+In order to give good recommendations we had to combine all the above data and map and characterize the users in terms of taste. Mapping users based on their reviews and the general restaurant information is a sizable, but necessary data operation that was completed through usage of Python's PANDAS module and the NumPy libraries. PANDAS allowed us to read and save .csv files from and to data frames, which, built on top of NumPy arrays, are strictly typed true C arrays and invoke C calls, vastly decreasing run time. To perform PCA and KNN, we used Python's Scikit-Learn machine learning library. Also built on top of NumPy, it was easy to seamlessly incorporate the library with our existing code. All of the code is visible at \url{https://github.com/sbarton272/PatRec}.
 
 \subsection{User Vectors}
-In order to predict the optimal recommendation for a given user, our first step is naturally to describe the user. Using a vector containing a numerical evaluation of the key traits chosen intiuitively keeping everything we found valuable, we can reduce each one to the following parameters:
+In order to predict the optimal recommendation for a given user, our first step is naturally to describe the user. Using a vector containing a numerical evaluation of the key traits chosen intuitively, we reduce each one to the following parameters:
 \begin{verbatim}
 	{
 	    "user_id": "t6GmgDZNeaTnj75NT",
@@ -171,7 +172,7 @@ In order to predict the optimal recommendation for a given user, our first step 
 
 For each user we include general statistics as its average rating, the number of reviews conducted as well as the average price of the restaurants visited, which represents a mean of a normalized price range provided by Yelp for all restaurants which we mapped to the reviews. Furthermore, we included a mean difference between the users rating of each reviewed restaurant compared to the restaurants average rating. 
 \\[.5em]
-\indent In order to more specifically map the users taste we further included the ratings and visits to each of the different categories classified by Yelp. Each restaurant is characterized by one or multiple categories out of 238. This maps not only the users interests by which categories he more frequently visits and reviews, but also the average rating of the different types. Categories the user has not visited are defaulted to zero.
+\indent In order to more specifically map the users taste we further included the ratings and visits to each of the different categories classified by Yelp. Each restaurant is characterized by one or multiple categories out of 238. This maps not only the users interests by which categories he more frequently visits and reviews, but also the average rating of the different types. Categories the user has not visited are defaulted to zero. In total there were 244 features.
 
 \subsection{Feature selection, dimensionality reduction, and Finding Similar Users}
 As a next step, we performed dimensionality reduction on the user vectors. We were about to cluster the user vectors to find users who had similar tastes, but most user vectors were very sparse--a user had visited only a handful out of the 238 restaurant categories. In order to reduce the user vector we used PCA and projected the data onto some of the principal components with the highest eigenvalues (how many principal components varied, the trials and results are discussed below). This step inherently weeded out dimensions with low variances which are less useful for identified separated clusters of users, and also decreased the run time of the rest of the algorithm.\\
@@ -186,13 +187,15 @@ stars_{i} = & \wu * avg_{usr}\\
 &+ \wrst * avg_{i}
 \end{align*}
 
- where $\wu + \ws + \wrst = 1$. $similarUserAvg_i$ was average review for restaurant $i$ from the similar users. Not all similar users would have reviewed the restaurant so this average may have been over as few as 1 to 2 similar users. 
+ where $\wu + \ws + \wrst = 1$. $similarUserAvg_i$ is average review for restaurant $i$ from the similar users. Not all similar users would have reviewed the restaurant so this average may have been over as few as 1 to 2 similar users. $avg_{usr}$ is the users average rating and $avg_{i}$ is the average rating for restaurant $i$.
 \\[0.5em]
-\indent As will be shown below in results the above weighting method did not work well initially. We were not able to beat the baseline. Therefore we amended the prediction scheme. The basic idea behind prediction is that a rating will likely fall near the restaurant average. Deviation from this average is more likely if there are multiple similar users who liked the restaurant and their ratings are quite different than the restaurant average. Our basic algorithm:
+\indent As will be shown below in results the above weighting method did not work well initially. We were not able to beat the baseline. Therefore we amended the prediction scheme. The basic idea behind prediction is that a rating will likely fall near the restaurant average. Deviation from this average is more likely if there are multiple similar users who liked the restaurant and their ratings are quite different than the restaurant average. Therefore we updated our algorithm to factor in the number of similar users who reviewed the restaurant:
+
 \begin{verbatim}
 Per restaurant i
-  if similarUsrRatings(i) > V and
-      numSimilarUserRating(i) > K
+  if (simUsrRatings(i)-restAvg(i)) >= V 
+      and
+      numSimilarUserRating(i) >= K
     prediction = w1*userAvg
                  +w2*similarUsrAvg(i)
                  +w3*resturantAvg(i)
@@ -201,11 +204,13 @@ Per restaurant i
                  .5*resturantAvg(i)
 \end{verbatim}
 
+We pick V, the difference between similar user average rating and restaurant average rating, to be .5 and K to be 3. This ensured that is similar users factored in then they had a very different rating than the average for the restaurant and that there were enough of these similar users so that their inclusion did not add too much personal variance.
+
 \subsection{Recommendation}
 The final step is to recommend a restaurant based on the predicted ratings. We simply recommend the restaurant with the highest predicted rating.
 
 \subsection{Validating Results}
-While our algorithm outputs a restaurant recommendation it is tough to validate based upon a single recommendation since a baseline cannot be easily established. The issue is that we do not have a way to provide real users our recommendation and see how well they like the recommendation. However, validating our rating prediction is simpler because we can compare to the actual ratings that users gave to restaurants. While we are able to predict on the restaurant rating we are not able to validate the actual choice of recommended restaurants.
+While our algorithm outputs a restaurant recommendation it is tough to validate based upon a single recommendation since a baseline cannot be easily established. The issue is that we do not have a way to provide real users our recommendation and see how well they like the recommendation. However, validating our rating prediction is simpler because we can compare to the actual ratings that users gave to restaurants.
 \\[0.5em]
 \indent Our validation process is to run our algorithm with a training set of users and reviews and then predict previously known ratings for users from a testing set. Because our system predicts ratings for only restaurants visited by the similar users, there are usually more predicted ratings than actual reviews. Therefore we take the intersection of the predicted ratings and the actual ratings and use this set to calculate our error.
 
@@ -215,10 +220,10 @@ While our algorithm outputs a restaurant recommendation it is tough to validate 
 
 \begin{figure}[t]
 \begin{center}
-   \includegraphics[width=0.9\linewidth]{knnErr.png}
+   \includegraphics[width=0.9\linewidth]{pcaMSE.png}
 \end{center}
-   \caption{A plot of rounded star error for varying knn parameter.}
-\label{fig:knnErr}
+   \caption{A plot of star mean square error for varying pca parameter.}
+\label{fig:pcaMSE}
 \end{figure}
 
 \begin{figure}[t]
@@ -231,19 +236,19 @@ While our algorithm outputs a restaurant recommendation it is tough to validate 
 
 \begin{figure}[t]
 \begin{center}
-   \includegraphics[width=0.9\linewidth]{pcaMSE.png}
+   \includegraphics[width=0.9\linewidth]{knnErr.png}
 \end{center}
-   \caption{A plot of star mean square error for varying pca parameter.}
-\label{fig:pcaMSE}
+   \caption{A plot of rounded star error for varying knn parameter.}
+\label{fig:knnErr}
 \end{figure}
 
 \subsection{Overview}
-Overall we were able to beat our baseline, at least in terms of rounded predicted star rating but not in terms of mean square error (MSE). We were able to vary the KNN K, weights and number of principal components until we had some success.
+Overall we were able to beat our baseline, at least in terms of rounded predicted star rating but not in terms of non-rounded ratings. We were able to vary the KNN K, weights and number of principal components until we had some success.
 
-In the end our belief that similar users have some predictive qualities for restaurant ratings proved correct.
+In the end our belief that similar users have some predictive qualities for restaurant ratings proved correct but are not as important a factor as we originally imagined.
 
 \subsection{Parameters}
-Our basic model relied on five input parameters: the $K_{KNN}$ for KNN, the number of principal components ($P$) and three weights applied to our three parameters used to make a prediction (\wu, \ws, \wrst). The 
+Our basic model relies on five input parameters: the $K$ for KNN, the number of principal components ($P$) and three weights applied to our three weight parameters used to make a prediction (\wu, \ws, \wrst) which were discussed before.
 
 We tried a range of $K_{KNN}$ and $P$ values to find the best in terms of error and then selected weights based upon intuition.
 
@@ -253,23 +258,38 @@ For our baseline, we used $\wu=.5$, $\ws=0$, and $\wrst=.5$. Our goal was to see
 
 For the three weights, we chose to make the weights even: $\wu=.33$, $\ws=.33$, and $\wrst=.33$. This meant that the similar users were factored in but we kept the user average and restaurant average to keep the predictions reasonably close to those averages.
 
-\subsection{MSE vs Rounded Star Mean Error}
-We used two metrics to gauge the performance of our algorithm. The first was traditional mean square error (MSE). The error was calculated in the raw prediction score difference between the actual rating and the predicted rating. Actual ratings were star counts of one to five while predicted ratings were floats in this range. This metric was a raw measurement of prediction success but because star rating are actually quantized it also made sense to look at other metrics.
+\subsection{Raw MSE vs Rounded Star MSE}
+We used two metrics to gauge the performance of our algorithm. The first was traditional mean square error (MSE). The error the difference between the actual rating and the predicted rating. Actual ratings were star counts of one to five while predicted ratings were floats in this range. This metric was a raw measurement of prediction success but because star rating are actually quantized it also made sense to look at other metrics.
 
-Our second metric took into account the fact that star ratings are 1 to 5. We rounded our predicted rating before looking at the error. This error was the MSE between the rounded prediction and the actual rating.
+Our second metric took into account the fact that star ratings are 1 to 5. We rounded our predicted rating before looking at the error. This error was the MSE between the rounded prediction and the actual rating. Note both of these MSE terms were is $star^2$ units.
 
 \subsection{Conclusions}
+
+\renewcommand{\arraystretch}{1.15}
+\begin{figure}[t]
+\begin{center}
+	\begin{tabular}{ l c c }
+		Algorithm & MSE & Rounded Prediction MSE \\ \hline
+		Baseline & .6183 & .6914 \\
+		Original & .6371 & .7142 \\
+		New & .6211 & .6869
+	\end{tabular}
+	\end{center}
+	\caption{Mean Square Error for KNN=100 and PCA=100.}
+	\label{tbl:MSE}
+\end{figure}
+
 Based on the metrics above we were able to eventually beat the baseline. We ran a number of trials holding various parameters constant and varying one parameter at a time. Graphs of some of these trials can be seen in Figure~\ref{fig:knnMSE}, Figure~\ref{fig:pcaMSE} and Figure~\ref{fig:knnErr}. Through this process we picked $P=100$ and $K_{KNN}=100$ as close to optimal parameters.
 
 The first parameter that we varied was $P$. These results can be seen in Figure~\ref{fig:pcaMSE} which shows the MSE as the PCA parameter was varied. It can be seen that the baseline always does the best. The graphs show low error for lower PCA values as the results are overfit, then a dip and gradual error increasing as too many parameters are used.
 
-Also of note from this PCA trial is how poorly our original algorithm did in comparison. Since the original algorithm included all similar user averages no mater how many similar users were actually factoring into a prediction, the similar users actually ended up providing too much variation and greatly increased the error. In our second algorithm implementation similar users were only included if a significant enough number were factoring into a prediction. Therefore the effect of similar users added less variance due to individual differences.
+Also of note from this PCA trial is how poorly our original algorithm did in comparison to the baseline. Since the original algorithm included all similar user averages no mater how many similar users were actually factoring into a prediction, the similar users actually ended up providing too much variation and greatly increased the error. In our second algorithm implementation similar users were only included if a significant enough number were factoring into a prediction. Therefore the effect of similar users added less variance due to individual differences.
 
 Next we looked at varying the KNN parameter which had a larger impact on the error. As can be seen in Figure~\ref{fig:knnMSE} the MSE was low due to overfitting. We picked a point after the error leveled off slightly but before it began increasing again to selecting too many similar users. It is important to note that the baseline is still doing better in this plot.
 
 Our MSE plots showed that the baseline was performing better but this may not be the best metric. Since Yelp only provides integer star ratings it made sense to round our predicted rating to the nearest star. Using these rounded predictions we recalculated MSE and found that our second algorithm does better than the baseline if the KNN parameter is large enough. This can be seen in Figure~\ref{fig:knnErr}. Note that the original algorithm does not come close to the baseline.
 
-Overall we found that similar users do have an impact on ratings just not as significant as we originally imagined. We also learned that it important not to place too much significance on individual similar users as other users can add too much variation. Additionally we believe that our baseline was a good decision as the baseline was itself fairly accurate. 
+Overall we found that similar users do have an impact on ratings just not as significant as we originally imagined. We also learned that it important not to place too much significance on individual similar users as they can add too much variation. Additionally we believe that our baseline was a good decision as the baseline was itself fairly accurate. Final MSE values for $K=100$ and $P=100$ can be seen in Figure~\ref{tbl:MSE}.
 
 %=====================================================================
 
@@ -294,10 +314,10 @@ Overall we found that similar users do have an impact on ratings just not as sig
 \end{figure}
 
 \subsection{Review Sparsity}
-One of our base assumptions is that users and establishments have enough reviews for us to extrapolate future reviews. However we may be pushing this limit. As can be seen in Figure~\ref{fig:usrCnt} a substantial majority of users, $85\%$, have five or fewer reviews. Since reviews likely provide the best information on user tastes we will likely have trouble classifying users by reviews alone. Likewise establishments also have a small number of reviews which will make it hard to predict potential ratings. However this is not quite as much of a problem as the user data. As can be seen in Figure~\ref{fig:bizCnt}, the majority, $60\%$, of businesses have fever than ten reviews.
+One of our base assumptions is that users and establishments have enough reviews for us to extrapolate future reviews. However we may be pushing this limit. As can be seen in Figure~\ref{fig:usrCnt} a substantial majority of users, $85\%$, have five or fewer reviews. Therefore we had trouble classifying users by reviews alone. Likewise establishments also have a small number of reviews which make it hard to predict potential ratings. However this is not quite as much of a problem as the user data. As can be seen in Figure~\ref{fig:bizCnt}, the majority, $60\%$, of businesses have fever than ten reviews.
 
 \subsection{Data Cleanliness}
-We have encountered issues with duplicate reviews as well as establishments not from the Phoenix area. Both are removed from our data set.
+We encountered issues with duplicate reviews which we removed from our data set.
 
 %=====================================================================
 
@@ -310,7 +330,7 @@ Our current classifier, the KNN, is of the Deterministic Association type, makin
 As mentioned our extracted data set contains users, restaurants and reviews are somehow related to Phoenix, AZ. Although, this does not mean that every user, restaurant or review is directly connected to this region. If a user has done one review of one restaurant in Phoenix, all his other reviews and effectively the corresponding restaurants is included in the data set. For now we have looked away from geographical locations, in order to have our algorithm give the best possible recommendation regardless of its location, but this is something that would be interesting to give more attention on a next iteration.
 
 \subsection{Discovery}
-Spotify and other music services provide an option for users to explore music outside of their current preferences or to add diversity. This project may be more useful to Yelp as a feature that provides a unique recommendation. Our algorithm is biased towards recommending similar restaurants which may not be what users are actually looking for when they ask for a recommendation.
+Spotify and other music services provide an option for users to explore music outside of their current preferences or to add diversity. This project may be more useful to Yelp as a feature that provides a diverse recommendation. Our algorithm is biased towards recommending similar restaurants which may not be what users are actually looking for when they ask for a recommendation.
 
 %=====================================================================
 
