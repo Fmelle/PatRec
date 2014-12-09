@@ -260,20 +260,20 @@ For the three weights, we chose to make the weights even: $\wu=.33$, $\ws=.33$, 
 \subsection{MSE vs Rounded Star Mean Error}
 We used two metrics to gauge the performance of our algorithm. The first was traditional mean square error (MSE). The error was calculated in the raw prediction score difference between the actual rating and the predicted rating. Actual ratings were star counts of one to five while predicted ratings were floats in this range. This metric was a raw measurement of prediction success but because star rating are actually quantized it also made sense to look at other metrics.
 
-Our second metric took into account the fact that star ratings are 1 to 5. We rounded our predicted rating before looking at the error. This error was calculated as the absolute value of the difference between the actual rating and the predicted rating.
+Our second metric took into account the fact that star ratings are 1 to 5. We rounded our predicted rating before looking at the error. This error was the MSE between the rounded prediction and the actual rating.
 
 \subsection{Conclusions}
 Based on the metrics above we were able to eventually beat the baseline. We ran a number of trials holding various parameters constant and varying one parameter at a time. Graphs of some of these trials can be seen in Figure~\ref{fig:knnMSE}, Figure~\ref{fig:pcaMSE} and Figure~\ref{fig:knnErr}. Through this process we picked $P=100$ and $K_{KNN}=100$ as close to optimal parameters.
 
-The first parameter that we varied was $P$. These results can be seen in Figure~\ref{fig:pcaMSE} which shows the MSE as the PCA parameter was varied. It can be seen that the baseline always does the best. Also of note is how poorly our original algorithm did in comparison. Since the original algorithm included all similar user averages no mater 
+The first parameter that we varied was $P$. These results can be seen in Figure~\ref{fig:pcaMSE} which shows the MSE as the PCA parameter was varied. It can be seen that the baseline always does the best. The graphs show low error for lower PCA values as the results are overfit, then a dip and gradual error increasing as too many parameters are used.
 
-As can be seen in Figure~\ref{fig:knnErr}
+Also of note from this PCA trial is how poorly our original algorithm did in comparison. Since the original algorithm included all similar user averages no mater how many similar users were actually factoring into a prediction, the similar users actually ended up providing too much variation and thus greatly increased the error. In our second algorithm implementation similar users were only included if a significant enough number were factoring into a prediction. Therefore the effect of similar users added less variance due to individual differences.
 
-- charts
-- works in what matters
-- why MSE not so good
-- overall impact of similar users
-- how many similar users were actually necessary
+Next we looked at varying the KNN parameter which had a larger impact on the error. As can be seen in Figure~\ref{fig:knnMSE} the MSE was low due to overfitting. We picked a point after the error leveled off slightly but before it began increasing again to selecting too many similar users. It is important to note that the baseline is still doing better in this plot.
+
+Our MSE plots showed that the baseline was performing better but this may not be the best metric. Since Yelp only provides integer star ratings it made sense to round our predicted rating to the nearest star. Using these rounded predictions we recalculated MSE and found that our second algorithm does better than the baseline if the KNN parameter is large enough. This can be seen in Figure~\ref{fig:knnErr}. Note that the original algorithm does not come close to the baseline.
+
+Overall we found that similar users do have an impact on ratings just not as significant as we originally imagined. We also learned that it important not to place too much significance on individual similar users as other users can add too much variation. Additionally we believe that our baseline was a good decision as the baseline was itself fairly accurate. 
 
 %=====================================================================
 
