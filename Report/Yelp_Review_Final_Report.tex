@@ -14,15 +14,15 @@
 % run, let it finish, and you should be clear).
 \usepackage[breaklinks=true,bookmarks=false]{hyperref}
 
+% Weights for prediction
+\newcommand{\wu}{\ensuremath{w_{user}}}
+\newcommand{\ws}{\ensuremath{w_{similarUsers}}}
+\newcommand{\wrst}{\ensuremath{w_{restaurantAvg}}}
+
 \cvprfinalcopy % *** Uncomment this line for the final submission
 
 \def\cvprPaperID{****} % *** Enter the CVPR Paper ID here
 \def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
-
-% Weights for prediction
-\newcommand{\w1}{\ensuremath{w_{user}}}
-\newcommand{\w2}{\ensuremath{w_{similarUsers}}}
-\newcommand{\w3}{\ensuremath{w_{restaurantAvg}}}
 
 % Pages are numbered in submission mode, and unnumbered in camera-ready
 %\ifcvprfinal\pagestyle{empty}\fi
@@ -137,8 +137,6 @@ While users and restaurants are necessary input information to structure our dat
 \label{fig:onecol}
 \end{figure}
 
-** TODO : Assure most precise description of pipeline given our final algortihm -- does it output an actual restaurant or a MSE for our predictions etc **
-
 Our pipeline takes in a given user, and outputs a restaurant recommendation. In order to do this we first create a feature vector for the person, and find determine the most similar users based on these features. We then see how these similar users rated restaurants the user has not been to, and thus evaluate how the user would rate those restaurants. Finally, the restaurant with the highest expected rating is returned to the user.
 
 \subsection{Parsing the Data and Implementing our models}
@@ -173,20 +171,20 @@ For each user we include general statistics as its average rating, the number of
 As a next step, we performed dimensionality reduction on the user vectors. We were about to cluster the user vectors to find users who had similar tastes, but most user vectors were very sparse--a user had visited only a handful out of the 238 restaurant categories. In order to reduce the user vector we used PCA and projected the data onto some of the principal components with the highest eigenvalues (how many principal components varied, the trials and results are discussed below). This step inherently weeded out dimensions with low variances which are less useful for identified separated clusters of users, and also had the added bonus of decreasing the run time of the rest of the algorithm. 
 
 \subsection{Finding Similar Users}
-** 
-TODO: Update for Cross-validated estimation of k when performed
-
-Include results with graphs: Optimal k-Fold Cross-Validation MSE error validating number of similar users to use
-**
-
 Our solution creates a feature vector of each user and uses the k Nearest Neighbors algorithm to sort the feature vectors and find k users closest to the person based on the feature vector. To find similar users, we simply run KNN for a single user feature vector on the entire set of user feature vectors, and let the algorithm evaluate the numerically closest ones through a simple distance measure. 
 
 The validation the number of k similar users to keep was done statistically using a K-Fold Cross-Validation Model for K (K=10 partitions I presume??) partitions tracking the MSE inducing for k ranging between 1 and X. 
 
 \subsection{Predicting User Reviews}
 In the next step of our pipeline we took in the similar users and their reviews. From the pool of restaurants reviewed by the similar users we predicted a score for each restaurant for a given user using the following weighted average for each restaurant $i$:
-\[stars_{i} = \w1 * avg_{usr} + \w2 * similarUserAvg_{i} + \w3 * avg_{i} \]
- where $\w1 + \w2 + \w3 = 1$. $similarUserAvg_i$ was average review for restaurant $i$ from the similar users. Not all similar users would have reviewed the restaurant so this average may have been over as few as 1 to 2 similar users. 
+
+\begin{align*}
+stars_{i} = & \wu * avg_{usr}\\
+&+ \ws * similarUserAvg_{i}\\
+&+ \wrst * avg_{i}
+\end{align*}
+
+ where $\wu + \ws + \wrst = 1$. $similarUserAvg_i$ was average review for restaurant $i$ from the similar users. Not all similar users would have reviewed the restaurant so this average may have been over as few as 1 to 2 similar users. 
 \\[0.5em]
 \indent As will be shown below in results the above weighting method did not work well initially. We were not able to beat the baseline. Therefore we amended the prediction scheme. The basic idea behind prediction is that a rating will likely fall near the restaurant average. Deviation from this average is more likely if there are multiple similar users who liked the restaurant and their ratings are quite different than the restaurant average. Our basic algorithm:
 \begin{verbatim}
@@ -243,24 +241,29 @@ Overall we were able to beat our baseline, at least in terms of rounded predicte
 In the end our belief that similar users have some predictive qualities for restaurant ratings proved correct.
 
 \subsection{Parameters}
-Our basic model relied on five input parameters: the $K_{KNN}$ for KNN, the number of principal components ($P$) and three weights applied to our three parameters used to make a prediction (\w1, \w2, \w3). The 
+Our basic model relied on five input parameters: the $K_{KNN}$ for KNN, the number of principal components ($P$) and three weights applied to our three parameters used to make a prediction (\wu, \ws, \wrst). The 
 
 We tried a range of $K_{KNN}$ and $P$ values to find the best in terms of error and then selected weights based upon intuition.
 
 \subsection{Baseline and Weighted Trials}
 
-For our baseline, we used $\w1=.5$, $\w2=0$, and $\w3=.5$. Our goal was to see how our algorithm would perform without any knowledge of similar users, so we kept \w1 and \w3 weighted evenly, but removed \w2 entirely.
+For our baseline, we used $\wu=.5$, $\ws=0$, and $\wrst=.5$. Our goal was to see how our algorithm would perform without any knowledge of similar users, so we kept \wu and \wrst weighted evenly, but removed \ws entirely.
 
-For the three weights, we chose to make the weights even: $\w1=.33$, $\w2=.33$, and $\w3=.33$. This meant that the similar users were factored in but we kept the user average and restaurant average to keep the predictions reasonably close to those averages.
+For the three weights, we chose to make the weights even: $\wu=.33$, $\ws=.33$, and $\wrst=.33$. This meant that the similar users were factored in but we kept the user average and restaurant average to keep the predictions reasonably close to those averages.
 
 \subsection{MSE vs Rounded Star Mean Error}
-- difference between two metrics
+We used two metrics to gauge the performance of our algorithm. The first was traditional mean square error (MSE). The error was calculated in the raw prediction score difference between the actual rating and the predicted rating. Actual ratings were star counts of one to five while predicted ratings were floats in this range. This metric was a raw measurement of prediction success but because star rating are actually quantized it also made sense to look at other metrics.
 
-\subsection{Parameter Tuning}
-- graphs
-- curve behavior
+Our second metric took into account the fact that star ratings are 1 to 5. We rounded our predicted rating before looking at the error. This error was calculated as the absolute value of the difference between the actual rating and the predicted rating.
 
 \subsection{Conclusions}
+Based on the metrics above we were able to eventually beat the baseline. We ran a number of trials holding various parameters constant and varying one parameter at a time. Graphs of some of these trials can be seen in Figure~\ref{fig:knnMSE}, Figure~\ref{fig:pcaMSE} and Figure~\ref{fig:knnErr}. Through this process we picked $P=100$ and $K_{KNN}=100$ as close to optimal parameters.
+
+The first parameter that we varied was $P$. These results can be seen in Figure~\ref{fig:pcaMSE} which shows the MSE as the PCA parameter was varied. It can be seen that the baseline always does the best. Also of note is how poorly our original algorithm did in comparison. Since the original algorithm included all similar user averages no mater 
+
+As can be seen in Figure~\ref{fig:knnErr}
+
+- charts
 - works in what matters
 - why MSE not so good
 - overall impact of similar users
