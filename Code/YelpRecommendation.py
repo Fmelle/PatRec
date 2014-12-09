@@ -110,7 +110,11 @@ class YelpRecommendation(object):
         usrReviewed = s.reviewData.loc[usrId].index
         recommendation = recommender.getRecommendation(usrReviewed)
 
-        return recommendation[0]
+        names = pd.DataFrame.from_csv('../ConvertedCSV/restaurant_id_name_mapping.csv')
+        print recommendation[0]
+        name = names.ix[recommendation[0]]['name']
+
+        return name
 
 #===============================================================================
 # Main
