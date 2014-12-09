@@ -111,7 +111,7 @@ class YelpRecommendation(object):
         recommendation = recommender.getRecommendation(usrReviewed)
 
         names = pd.DataFrame.from_csv('../ConvertedCSV/restaurant_id_name_mapping.csv')
-        print recommendation[0]
+
         name = names.ix[recommendation[0]]['name']
 
         return name
