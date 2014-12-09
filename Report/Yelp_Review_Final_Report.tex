@@ -137,9 +137,7 @@ While users and restaurants are necessary input information to structure our dat
 Our pipeline takes in a given user, and outputs a restaurant recommendation. In order to do this we first create a feature vector for the person, and find determine the most similar users based on these features. We then see how these similar users rated restaurants the user has not been to, and thus evaluate how the user would rate those restaurants. Finally, the restaurant with the highest expected rating is returned to the user.
 
 \subsection{Parsing the Data and Implementing our models}
-In order to perform a proper restaurant predictions and give good recommendations we had to combine all the above data provided in order to map and characterize the users in terms of taste. Mapping users based on their reviews and the general restaurant information is a sizeable, but necessary data operation that was completed through usage of Python's PANDAS module and the NumPy libraries.. **TODO: Gavi our usage of Pandas, NumPy and other libraries to parse, extract and establish the data**.
-
-Our code is implemented in Python's PANDAS module. Coding in Python allows us to rapidly prototype and get things working in the short amount of time we have to do the project. PANDAS, being strictly typed and implemented in C, speeds of computation time considerably and allows us to run our code on a much larger dataset. The code is visible at \url{https://github.com/sbarton272/PatRec}.
+In order to perform a proper restaurant predictions and give good recommendations we had to combine all the above data provided in order to map and characterize the users in terms of taste. Mapping users based on their reviews and the general restaurant information is a sizeable, but necessary data operation that was completed through usage of Python's PANDAS module and the NumPy libraries. PANDAS allowed us to read and save .csv files from and to data frames, which, built on top of NumPy arrays, are strictly typed true C arrays and invoke C calls, vastly decreasing run time. To perform PCA and KNN, we used Python's scikit-learn machine learning library. Also built on top of NumPy, it was easy to seamlessly incorporate the library with our existing code. All of the code is visible at \url{https://github.com/sbarton272/PatRec}.
 
 \subsection{User Vectors}
 In order to predict the optimal recommendation for a given user, our first step is naturally to describe the user. Using a vector containing a numerical evaluation of the key traits chosen intiuitively keeping everything we found valuable, we can reduce each one to the following parameters:
@@ -164,14 +162,10 @@ In order to predict the optimal recommendation for a given user, our first step 
 
 For each user we include general statistics as its average rating, the number of reviews conducted as well as the average price of the restaurants visited, which represents a mean of a normalized price range provided by Yelp for all restaurants which we mapped to the reviews. Furthermore, we included a mean difference between the users rating of each reviewed restaurant compared to the restaurants average rating. 
 \\[.5em]
-\indent In order to more specifically map the users taste we further included the ratings and visits to each of the different categories classified by Yelp. As each restaurant will be characterized by one or multiple categories within a set array totalling 238 different ones, this maps not only the users interests by which categories he more frequently visits and reviews, but also the average rating of the different types. Although the number of categories is large, each restaurant can as mentioned be characterized by multiple ones providing each user with a sizeable set of values, while those not visited are defaulted to zero.
+\indent In order to more specifically map the users taste we further included the ratings and visits to each of the different categories classified by Yelp. As each restaurant will be characterized by one or multiple categories within a set array totaling 238 different ones, this maps not only the users interests by which categories he more frequently visits and reviews, but also the average rating of the different types. Although the number of categories is large, each restaurant can as mentioned be characterized by multiple ones providing each user with a sizable set of values, while those not visited are defaulted to zero.
 
 \subsection{Feature selection and dimensionality reduction}
-** 
-TODO: Gavi PCA description, execution 
-
-Include results: PCA selected features with optimal number of principal components to use, along with the processes involved.
-**
+As a next step, we performed dimensionality reduction on the user vectors. We were about to cluster the user vectors to find users who had similar tastes, but most user vectors were very sparse--a user had visited only a handful out of the 238 restaurant categories. In order to reduce the user vector we used PCA and projected the data onto some of the principal components with the highest eigenvalues (how many principal components varied, the trials and results are discussed below). This step inherently weeded out dimensions with low variances which are less useful for identified separated clusters of users, and also had the added bonus of decreasing the run time of the rest of the algorithm. 
 
 \subsection{Finding Similar Users}
 ** 
@@ -231,12 +225,24 @@ Why not? Be believe that our results show that a given user's review is generall
 - PCA: Overfitting too close, then MSE spike and drop (stop overfitting)
 - KNN eventually have too many similar users
 
-\subsection{Parameter}
-Our basic model parameters were $K_{KNN}$ for KNN, $w_{1}, w_2, w_3$ for prediction and $P$ for the number of principal components used.
+\subsection{Parameters}
+Our basic model relied on five input parameters:
 
-We tried a range of $K_{KNN}$ and $P$ values to find the best and then selected weights based upon intuition.
+\begin{enumerate}
+\item The $K_{KNN}$ for KNN
+\item The number of principal components the user vector was projected onto, $P$
+\item Three weights applied to our three parameters used to make a prediction: 
+\begin{enumerate}
+\item $w_{u}$, the weight given to the user's average review score
+\item $w_{s}$, the weight given to how a user's $K_{KNN}$ similar users rated the restaurant in question
+\item $w_{r}$, the weight given to the restaurant's average review score
+\end{enumerate}
+\end{enumerate}
+We tried a range of $K_{KNN}$ and $P$ values to find the best and then selected weights based upon intuition. For the three weights, we used $w_{u}=.33$, $w_{s}=.33$, and $w_{r}=.33$, evenly weighting all three factors.
 
 \subsection{Baseline}
+
+For our baseline, we used $w_{u}=.5$, $w_{s}=0$, and $w_{r}=.5$. Our goal was to see how our algorithm would perform without any knowledge of similar users, so we kept $w_{u}$ and $w_{r}$ weighted evenly, but removed $w_{s}$ entirely.
 
 \subsection{Parameter Tuning}
 
@@ -273,7 +279,7 @@ We have encountered issues with duplicate reviews as well as establishments not 
 \section{Future work}
 
 \subsection{Evaluation of classifier: Generative models}
-Our current classifier, the KNN, is of the Deterministic Association type, making no assumptions of data distribution or correlation of any kind. This leaves a big room of improvement as our data contains unused information that we can take into equation. Rather than just deterministically sorting users based on numerical values, can further cluster and develop user-characterizing models based on taste. This edge especially relates to the fact that every restaurant is characterized by a set of labels such as \textit{Mexican}, \textit{Pizza}, \textit{American} among others that permits us to map a users taste based on general visitation and following reviews. Not only can this play a part in the development of similarity, but also help further weight the restaurant valuations and predictions in the following evaluation. We currently imagine using techniques such as Naïve Bayes with possible follow-up by a GMM variation.
+Our current classifier, the KNN, is of the Deterministic Association type, making no assumptions of data distribution or correlation of any kind. This leaves a big room of improvement as our data contains unused information that we can take into equation. Rather than just sorting users based on numerical values in a deterministic manner, can further cluster and develop user-characterizing models based on taste. This edge especially relates to the fact that every restaurant is characterized by a set of labels such as \textit{Mexican}, \textit{Pizza}, \textit{American} among others that permits us to map a users taste based on general visitation and following reviews. Not only can this play a part in the development of similarity, but also help further weight the restaurant valuations and predictions in the following evaluation. We currently imagine using techniques such as Naïve Bayes with possible follow-up by a GMM variation.
 
 \subsection{Geographic Restrictions}
 As mentioned our extracted data set contains users, restaurants and reviews are somehow related to Phoenix, AZ. Although, this does not mean that every user, restaurant or review is directly connected to this region. If a user has done one review of one restaurant in Phoenix, all his other reviews and effectively the corresponding restaurants is included in the data set. For now we have looked away from geographical locations, in order to have our algorithm give the best possible recommendation regardless of its location, but this is something that would be interesting to give more attention on a next iteration.
