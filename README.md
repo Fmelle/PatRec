@@ -67,3 +67,38 @@ Get user vector with restaurant types
 - The user_feature_matrix script has been updated with current progress
 - A description explains the issues involved
 - Pseudo-code added as an example demonstration of how the user vectors could be assembled
+
+Demo users:
+===========
+
+Holly R. -- Dataset UsrID: Pv7DGHzZ-uqIUdOsqPpsVg
+-------------------------------------------------
+Profile: http://www.yelp.com/user_details?userid=A2JGzkvNjckSmps_4FbKWw
+Review in Phoenix (top one): http://www.yelp.com/biz/little-miss-bbq-phoenix-2?hrid=K57-I9jZNV-2fWVG-JEdKw
+Taste: (Grill, BBQ, American)
+
+Recommendation: http://www.yelp.com/biz/wicked-spoon-las-vegas
+
+Terry T. -- Dataset UsrID: ZrUZtLgLOn15v2NIZl-oKQ
+-------------------------------------------------
+Profile: http://www.yelp.com/user_details?userid=FcVQPI-ulgIXJcl5580YeA
+Reivew in Phoenix (top one): http://www.yelp.com/biz/treehouse-bakery-phoenix-2?hrid=jxkt7kpuTd0KZhabdDQ1wA
+Taste: (Desserts, Vegetarian, Bars, American)
+
+Recommendation: http://www.yelp.com/biz/seasons-52-phoenix
+
+Mia N. -- Dataset UsrID: wUEp87FqOB9ew27Iz6zk_w
+-----------------------------------------------
+Profile: http://www.yelp.com/user_details?userid=Q6Dcxo3_lNCzkqK7J3FL7A
+Review in Phoenix (top one): http://www.yelp.com/biz/harumi-sushi-phoenix?hrid=UZBfZr_09HaypLGfzEm8LQ
+Taste: (Desserts, Bars, Sushi, Pizza)
+
+Recommendation: http://www.yelp.no/biz/the-melting-pot-phoenix
+
+Daren C. -- Dataset UsrID: C6IOtaaYdLIT5fWd7ZYIuA
+-------------------------------------------------
+Profile: http://www.yelp.com/user_details?userid=XEHZoTDWjw3w-gcQyYIe4g
+Review in Phoenix (top one): http://www.yelp.com/biz/santos-lucha-libre-phoenix?hrid=h9GzwSM0NxjUq_WYrsQhWA
+Taste: (Mexican food, BBQ..)
+
+Recommendation: http://www.yelp.no/biz/lucilles-smokehouse-bar-b-que-tempe
