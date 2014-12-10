@@ -104,20 +104,18 @@ In order to generate a sufficient user characterizing model with fewest possible
 As Yelp does not limit themselves to restaurants, neither does the original data set. Extracting these was the first part of our process. The restaurants contains a lot of information that we do not find particularly useful for this iteration of our prediction algorithm such as as \textit{address}, \textit{hours}, \textit{neighborhoods}, \textit{Wi-fi}, \textit{Ambiance}, \textit{Noise level} and \textit{Attire}, so we removed them. We finally end up with a set of 14,303 restaurants. One example of information we use is detailed below:
 
 \begin{verbatim}
-	{
-	    "business_id": "8Jg4S5r79dh",
-	    "categories": [
-	        "Pizza",
-	        "Restaurants",
-	        "Vegetarian",
-	    ],
-	    "name": "Mellow Mushroom",
-	    "price_range": 2,
-	    "review_count": 62,
- 		"average_stars": 3.5,
-        "city": "Phoenix",
- 		"state": "AZ"
-	}
+{
+    "average_stars": 3.5,
+    "business_id": "8Jg4S5r79dh",
+    "categories": [
+        "Pizza",
+        "Vegan",
+    ],
+    "city": "Phoenix",
+    "name": "Mellow Mushroom",
+    "price_range": 2,
+    "review_count": 311
+}
 \end{verbatim}
 
 \subsection{Reviews}
@@ -191,7 +189,7 @@ stars_{i} = & \wu * avg_{usr}\\
 
  where $\wu + \ws + \wrst = 1$. $similarUserAvg_i$ is average review for restaurant $i$ from the similar users. Not all similar users would have reviewed the restaurant so this average may have been over as few as 1 to 2 similar users. $avg_{usr}$ is the users average rating and $avg_{i}$ is the average rating for restaurant $i$.
 \\[0.5em]
-\indent As will be shown below in results the above weighting method did not work well initially. We were not able to beat the baseline. Therefore we amended the prediction scheme. The basic idea behind prediction is that a rating will likely fall near the restaurant average. Deviation from this average is more likely if there are multiple similar users who liked the restaurant and their ratings are quite different than the restaurant average. Therefore we updated our algorithm to factor in the number of similar users who reviewed the restaurant:
+\indent As will be shown below in results the above weighting method did not work well initially. We were not able to beat the baseline. Therefore we amended the prediction scheme. The basic idea behind prediction is that a rating will likely fall near the restaurant average. Deviation from this average is more likely if there are multiple similar users who liked the restaurant and their ratings are quite different than the restaurant average. Therefore we updated our algorithm to factor in the number of similar users who reviewed the restaurant:\\[1em]
 
 \begin{verbatim}
 Per restaurant i
