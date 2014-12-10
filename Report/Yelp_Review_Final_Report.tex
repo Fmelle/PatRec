@@ -89,7 +89,7 @@ This group found that the MSE between their predicted ratings and the real ratin
 Yelp holds a massive amount of data at their disposal, as users provide personal information, business information, and their reviews. For our purpose, Yelp provides a subset of this data based in Phoenix, Arizona, generated with the same attributes as the real world data. This provides us with a total of 14,303 restaurants and 1.2M reviews, all connected to Phoenix through around 250,000 users. The data is originally compiled JSON, which we have expanded to reduce and edit, and then convert to a matrix-based CSV-format for classification and prediction.
 
 \subsection{Users}
-In order to generate a user characterizing model we were inclined to extract all the elite users as they contain the most data. Yelp classified 20,045 individuals as elite, all with an average of 200 reviews each. In addition we have randomly extracted 2,014 sample users not contained within the training data, to test our algorithm on, as well as the top 50 reviewers from the elite users to test the pipeline on. All users are in the same reduced format, only containing the parameters we deem necessary for characterizing the particular users. Below is an example of user-specific data we will use as basis for our models.
+In order to generate a sufficient user characterizing model with fewest possible data points for computational speed and swift iterations, we were inclined to extract all the elite users as they contain the most data. Yelp classified 20,045 individuals as elite, all with an average of 200 reviews each. In addition we have randomly extracted the top 50 reviewers from the elite users to test our algorithm pipeline and tune algorithm parameters on. All users are in the same reduced format, only containing the parameters we deem necessary for characterizing the particular users. Below is an example of user-specific data we will use as basis for our models.
 
 \begin{verbatim}
 {
@@ -101,25 +101,27 @@ In order to generate a user characterizing model we were inclined to extract all
 \end{verbatim}
 
 \subsection{Restaurants}
-As Yelp does not limit themselves to restaurants, neither does the original data set. Extracting these was the first part of our process. The restaurants contains a lot of information that we do not find particularly useful for this iteration of our prediction algorithm such as as \textit{address}, \textit{hours}, \textit{neighborhoods}, \textit{geographical coordinates}, \textit{Wi-fi}, \textit{Ambiance}, \textit{Noise level} and \textit{Attire}, so we removed them. We finally end up with a set of 14,303 restaurants. One example of information we use is detailed below:
+As Yelp does not limit themselves to restaurants, neither does the original data set. Extracting these was the first part of our process. The restaurants contains a lot of information that we do not find particularly useful for this iteration of our prediction algorithm such as as \textit{address}, \textit{hours}, \textit{neighborhoods}, \textit{Wi-fi}, \textit{Ambiance}, \textit{Noise level} and \textit{Attire}, so we removed them. We finally end up with a set of 14,303 restaurants. One example of information we use is detailed below:
 
 \begin{verbatim}
 	{
 	    "business_id": "8Jg4S5r79dh",
 	    "categories": [
 	        "Pizza",
-	        "Restaurants"
+	        "Restaurants",
+	        "Vegetarian",
 	    ],
-	    "city": "Phoenix",
 	    "name": "Mellow Mushroom",
+	    "price_range": 2,
 	    "review_count": 62,
-	    "average_stars": 3.5,
-	    "state": "AZ"
+ 		"average_stars": 3.5,
+        "city": "Phoenix",
+ 		"state": "AZ"
 	}
 \end{verbatim}
 
 \subsection{Reviews}
-While users and restaurants are necessary input information to structure our data and our results, the reviews are the backbone of our predictions and binds all of the data together. With a total of 1.2M reviews we ignore from the actual review text, as feature generation through analysis of this text would become too complex. This lead to us only preserving the following structure of a review.
+While users and restaurants are necessary input information to structure our data and our results, the reviews are the backbone of our predictions and binds all of the data together. With a total of 1.2M reviews we ignore the actual review text, as feature generation through analysis of this would become too complex and we choose to trust that the reviewers summarize their impression in the normalized rating system. This lead to us only preserving the following structure of a review.
 
 \begin{verbatim}
 	{
@@ -172,11 +174,11 @@ In order to predict the optimal recommendation for a given user, our first step 
 
 For each user we include general statistics as its average rating, the number of reviews conducted as well as the average price of the restaurants visited, which represents a mean of a normalized price range provided by Yelp for all restaurants which we mapped to the reviews. Furthermore, we included a mean difference between the users rating of each reviewed restaurant compared to the restaurants average rating. 
 \\[.5em]
-\indent In order to more specifically map the users taste we further included the ratings and visits to each of the different categories classified by Yelp. Each restaurant is characterized by one or multiple categories out of 238. This maps not only the users interests by which categories he more frequently visits and reviews, but also the average rating of the different types. Categories the user has not visited are defaulted to zero. In total there were 244 features.
+\indent In order to more specifically map the users taste we further included the ratings and visits to each of the different categories classified by Yelp. Each restaurant is characterized by one or multiple categories out of 228. This maps not only the users interests by which categories he more frequently visits and reviews, but also the average rating of the different types. Categories the user has not visited are defaulted to zero. In total there were 460 features.
 
 \subsection{Feature selection, dimensionality reduction, and Finding Similar Users}
-As a next step, we performed dimensionality reduction on the user vectors. We were about to cluster the user vectors to find users who had similar tastes, but most user vectors were very sparse--a user had visited only a handful out of the 238 restaurant categories. In order to reduce the user vector we used PCA and projected the data onto some of the principal components with the highest eigenvalues (how many principal components varied, the trials and results are discussed below). This step inherently weeded out dimensions with low variances which are less useful for identified separated clusters of users, and also decreased the run time of the rest of the algorithm.\\
-\indent Our pipeline then uses the KNN algorithm to sort through the feature vectors and find k users closest to the input user based on euclidean distance of their feature vectors. 
+As a next step, we performed dimensionality reduction on the user vectors. We were about to cluster the user vectors to find users who had similar tastes, but most user vectors were very sparse--a user had visited only a handful out of the 228 restaurant categories. In order to reduce the user vector we used PCA and projected the data onto some of the principal components with the highest eigenvalues (how many principal components varied, the trials and results are discussed below). This step inherently weeded out dimensions with low variances which are less useful for identified separated clusters of users, and also decreased the run time of the rest of the algorithm.\\
+\indent Our pipeline then uses the KNN algorithm to sort through the feature vectors and find k users closest to the input user based on a simple euclidean distance measure. 
 
 \subsection{Predicting User Reviews}
 In the next step of our pipeline we took in the similar users and their reviews. From the pool of restaurants reviewed by the similar users we predicted a score for each restaurant for a given user using the following weighted average for each restaurant $i$:
@@ -209,10 +211,10 @@ We pick V, the difference between similar user average rating and restaurant ave
 \subsection{Recommendation}
 The final step is to recommend a restaurant based on the predicted ratings. We simply recommend the restaurant with the highest predicted rating.
 
-\subsection{Validating Results}
+\subsection{Validating Parameters}
 While our algorithm outputs a restaurant recommendation it is tough to validate based upon a single recommendation since a baseline cannot be easily established. The issue is that we do not have a way to provide real users our recommendation and see how well they like the recommendation. However, validating our rating prediction is simpler because we can compare to the actual ratings that users gave to restaurants.
 \\[0.5em]
-\indent Our validation process is to run our algorithm with a training set of users and reviews and then predict previously known ratings for users from a testing set. Because our system predicts ratings for only restaurants visited by the similar users, there are usually more predicted ratings than actual reviews. Therefore we take the intersection of the predicted ratings and the actual ratings and use this set to calculate our error.
+\indent Our validation process is to run our algorithm with a training set of all the elite with their reviews and then predict previously known ratings for the top 50 users as a validation set. Because our system predicts ratings for only restaurants visited by the similar users, there are usually more predicted ratings than actual reviews. Therefore we take the intersection of the predicted ratings and the actual ratings and use this set to calculate our error and subsequently set our KNN and PCA parameters based on the result.
 
 %=====================================================================
 
@@ -243,7 +245,7 @@ While our algorithm outputs a restaurant recommendation it is tough to validate 
 \end{figure}
 
 \subsection{Overview}
-Overall we were able to beat our baseline, at least in terms of rounded predicted star rating but not in terms of non-rounded ratings. We were able to vary the KNN K, weights and number of principal components until we had some success.
+Overall we were able to beat our baseline, at least in terms of rounded predicted star rating, but not in terms of non-rounded ratings. We were able to vary the KNN K number of neighbors, weights and number of principal components until we had some success with the validation set.
 
 In the end our belief that similar users have some predictive qualities for restaurant ratings proved correct but are not as important a factor as we originally imagined.
 
@@ -314,20 +316,22 @@ Overall we found that similar users do have an impact on ratings just not as sig
 \end{figure}
 
 \subsection{Review Sparsity}
-One of our base assumptions is that users and establishments have enough reviews for us to extrapolate future reviews. However we may be pushing this limit. As can be seen in Figure~\ref{fig:usrCnt} a substantial majority of users, $85\%$, have five or fewer reviews. Therefore we had trouble classifying users by reviews alone. Likewise establishments also have a small number of reviews which make it hard to predict potential ratings. However this is not quite as much of a problem as the user data. As can be seen in Figure~\ref{fig:bizCnt}, the majority, $60\%$, of businesses have fever than ten reviews.
-
-\subsection{Data Cleanliness}
-We encountered issues with duplicate reviews which we removed from our data set.
+One of our base assumptions is that users and establishments have enough reviews for us to extrapolate future reviews. However we may be pushing this limit. As can be seen in Figure~\ref{fig:usrCnt} a substantial majority of users, $85\%$, have five or fewer reviews. Therefore we had trouble classifying users by reviews alone. Likewise establishments also have a small number of reviews which make it hard to predict potential ratings. However this is not quite as much of a problem as the user data. As can be seen in Figure~\ref{fig:bizCnt}, the majority, $60\%$, of businesses have fever than ten reviews. Finally a mapping of all available users towards restaurants yields a 99.99\% sparsity\cite{ClassPresentation}.
 
 %=====================================================================
 
 \section{Future work}
 
-\subsection{Evaluation of classifier: Generative models}
-Our current classifier, the KNN, is of the Deterministic Association type, making no assumptions of data distribution or correlation of any kind. This leaves a big room of improvement as our data contains unused information that we can take into equation. Rather than just sorting users based on numerical values in a deterministic manner, can further cluster and develop user-characterizing models based on taste. This edge especially relates to the fact that every restaurant is characterized by a set of labels such as \textit{Mexican}, \textit{Pizza}, \textit{American} among others that permits us to map a users taste based on general visitation and following reviews. Not only can this play a part in the development of similarity, but also help further weight the restaurant valuations and predictions in the following evaluation. We currently imagine using techniques such as Naïve Bayes with possible follow-up by a GMM variation.
+\subsection{Validation of recommendations}
+Our current progress with the Yelp recommendation system extends to a pipeline that will from the set of elite users provided, output a restaurant name for a given user, whose performance we have thoroughly tested. 
+
+However, a next step would be to incorporate an extensive testing system that would value the recommendations in a real world setting. Having tested through with multiple users the overall outcome seems quite convincing, recognizing key traits of test users such as appreciation of vegetarian or fat food, it is hard to numerically measure the recommendation appreciation of the average Yelp user.
 
 \subsection{Geographic Restrictions}
 As mentioned our extracted data set contains users, restaurants and reviews are somehow related to Phoenix, AZ. Although, this does not mean that every user, restaurant or review is directly connected to this region. If a user has done one review of one restaurant in Phoenix, all his other reviews and effectively the corresponding restaurants is included in the data set. For now we have looked away from geographical locations, in order to have our algorithm give the best possible recommendation regardless of its location, but this is something that would be interesting to give more attention on a next iteration.
+
+\subsection{Evaluation of classifier: Generative models}
+Our current classifier, the KNN, is of the Deterministic Association type, making no assumptions of data distribution or correlation of any kind. This leaves a big room of improvement as our data contains unused information that we can take into equation. Rather than just sorting users based on numerical values in a deterministic manner, can further cluster and develop user-characterizing models based on taste. This edge especially relates to the fact that every restaurant is characterized by a set of labels such as \textit{Mexican}, \textit{Pizza}, \textit{American} among others that permits us to map a users taste based on general visitation and following reviews. Not only can this play a part in the development of similarity, but also help further weight the restaurant valuations and predictions in the following evaluation. We currently imagine using techniques such as Naïve Bayes with possible follow-up by a GMM variation.
 
 \subsection{Discovery}
 Spotify and other music services provide an option for users to explore music outside of their current preferences or to add diversity. This project may be more useful to Yelp as a feature that provides a diverse recommendation. Our algorithm is biased towards recommending similar restaurants which may not be what users are actually looking for when they ask for a recommendation.
